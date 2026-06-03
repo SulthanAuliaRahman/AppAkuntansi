@@ -1,58 +1,231 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Akuntansi Interaktif — Perusahaan Jasa "Anugerah Sakti"
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web siklus akuntansi lengkap untuk studi kasus Perusahaan Jasa "Anugerah Sakti" periode April 2008. Dibangun dengan **Laravel 13** (MVC), **MySQL**, dan **Tailwind CSS**.
 
-## About Laravel
+> Tugas Besar — Kelompok 2 | Mata Kuliah Pengantar Akuntansi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Menu | Deskripsi |
+|---|---|
+| Dashboard | KPI ringkasan keuangan + 3 grafik Chart.js |
+| Jurnal Umum | Input/hapus transaksi, tabel kronologis April 2008 |
+| Buku Besar | Mutasi saldo per akun (dropdown 19 akun) |
+| Neraca Saldo | Trial balance sebelum penyesuaian |
+| Jurnal Penyesuaian | 6 AJE dengan toggle aktif/nonaktif |
+| Kertas Kerja | Neraca lajur 10 kolom (NSD, L/R, Neraca) |
+| Laporan Keuangan | Laba Rugi, Perubahan Modal, Neraca |
+| Jurnal Penutup | Penutupan 4 ayat ke Modal |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Persyaratan Sistem
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **PHP** >= 8.2
+- **Composer** >= 2.x
+- **MySQL** >= 5.7 (atau MariaDB >= 10.3)
+- **XAMPP** / **Laragon** / server lokal sejenis
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Cara Menjalankan
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Clone / Extract Project
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-repo>
+cd AppAkuntansi
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Install Dependensi PHP
 
-## Contributing
+```bash
+composer install --ignore-platform-reqs
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+> Flag `--ignore-platform-reqs` diperlukan jika versi PHP lokal adalah 8.2 (project dikembangkan di PHP 8.2, lock file mungkin menyebut 8.3+).
 
-## Code of Conduct
+### 3. Salin File Konfigurasi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Security Vulnerabilities
+### 4. Konfigurasi Database
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Buka file `.env`, sesuaikan bagian database:
 
-## License
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=app_akuntansi
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+> Jika menggunakan XAMPP dengan password MySQL kosong, konfigurasi di atas sudah benar.
+
+### 5. Pastikan MySQL Berjalan
+
+Nyalakan MySQL dari **XAMPP Control Panel**, atau jalankan manual:
+
+```bash
+# Windows (XAMPP)
+C:\xampp\mysql\bin\mysqld.exe --standalone
+```
+
+### 6. Buat Database
+
+```bash
+# Via MySQL CLI
+mysql -u root -e "CREATE DATABASE app_akuntansi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+Atau buat melalui **phpMyAdmin** di `http://localhost/phpmyadmin`.
+
+### 7. Jalankan Migrasi dan Seeder
+
+```bash
+php artisan migrate --seed
+```
+
+Perintah ini akan:
+- Membuat semua tabel (`akun`, `saldo_awal`, `jurnal`, `entri_penyesuaian`, `pengaturan`)
+- Mengisi data awal: 19 akun perkiraan, saldo awal Maret 2008, 11 transaksi April, 6 AJE, dan pengaturan awal
+
+> Jika ingin **reset ulang** seluruh data ke kondisi awal kasus studi:
+> ```bash
+> php artisan migrate:fresh --seed
+> ```
+
+### 8. Jalankan Development Server
+
+```bash
+php artisan serve
+```
+
+Buka browser di: **http://127.0.0.1:8000**
+
+---
+
+## Struktur Folder & File Penting
+
+```
+AppAkuntansi/
+│
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── DashboardController.php       # KPI + data grafik
+│   │   │   ├── JurnalController.php          # CRUD transaksi + reset
+│   │   │   ├── BukuBesarController.php       # Filter akun via ?akun=
+│   │   │   ├── NeracaSaldoController.php     # Trial balance
+│   │   │   ├── PenyesuaianController.php     # AJE + toggle on/off
+│   │   │   ├── KertasKerjaController.php     # Neraca lajur 10 kolom
+│   │   │   ├── LaporanController.php         # Laporan keuangan formal
+│   │   │   └── JurnalPenutupController.php   # Closing entries
+│   │   │
+│   │   └── Requests/
+│   │       └── StoreJurnalRequest.php        # Validasi input transaksi baru
+│   │
+│   ├── Models/
+│   │   ├── Akun.php                          # Tabel: akun (kode, nama, tipe, normal)
+│   │   ├── SaldoAwal.php                     # Tabel: saldo_awal (saldo per akun)
+│   │   ├── Jurnal.php                        # Tabel: jurnal (transaksi + is_static)
+│   │   ├── EntriPenyesuaian.php              # Tabel: entri_penyesuaian (6 AJE)
+│   │   └── Pengaturan.php                    # Tabel: pengaturan (key-value settings)
+│   │
+│   ├── Services/
+│   │   └── AkuntansiService.php              # Engine kalkulasi akuntansi (ledger, NSD, adj)
+│   │
+│   └── Providers/
+│       └── AppServiceProvider.php            # Registrasi Blade directive @rupiah
+│
+├── database/
+│   ├── migrations/
+│   │   ├── ..._create_akun_table.php
+│   │   ├── ..._create_saldo_awal_table.php
+│   │   ├── ..._create_jurnal_table.php
+│   │   ├── ..._create_entri_penyesuaian_table.php
+│   │   └── ..._create_pengaturan_table.php
+│   │
+│   └── seeders/
+│       ├── DatabaseSeeder.php                # Entry point, memanggil semua seeder
+│       ├── AkunSeeder.php                    # 19 akun perkiraan (Chart of Accounts)
+│       ├── SaldoAwalSeeder.php               # Saldo awal per 31 Maret 2008
+│       ├── JurnalSeeder.php                  # 11 transaksi kasus studi April 2008
+│       ├── EntriPenyesuaianSeeder.php        # 6 jurnal penyesuaian
+│       └── PengaturanSeeder.php              # Pengaturan awal (adjustments_enabled=1)
+│
+├── resources/
+│   └── views/
+│       ├── layouts/
+│       │   └── akuntansi.blade.php           # Layout utama (header, footer, CDN scripts)
+│       │
+│       └── akuntansi/
+│           ├── partials/
+│           │   └── navigation.blade.php      # Tab navigasi antar menu
+│           ├── dashboard.blade.php
+│           ├── jurnal.blade.php
+│           ├── buku-besar.blade.php
+│           ├── neraca-saldo.blade.php
+│           ├── penyesuaian.blade.php
+│           ├── kertas-kerja.blade.php
+│           ├── laporan.blade.php
+│           └── jurnal-penutup.blade.php
+│
+└── routes/
+    └── web.php                               # Definisi semua route akuntansi
+```
+
+---
+
+## Skema Database
+
+| Tabel | Keterangan | Diisi via |
+|---|---|---|
+| `akun` | 19 akun perkiraan (kode, nama, tipe, normal) | Seeder |
+| `saldo_awal` | Saldo awal per akun per 31 Maret 2008 | Seeder |
+| `jurnal` | Transaksi harian (`is_static=1` = data kasus, tidak bisa hapus) | Seeder + User |
+| `entri_penyesuaian` | 6 AJE per 30 April 2008 | Seeder |
+| `pengaturan` | Key-value settings app (`adjustments_enabled`) | Seeder |
+
+---
+
+## Alur Data
+
+```
+MySQL Database
+      │
+      ▼
+AkuntansiService          ← Engine kalkulasi (ledger, NSD, adjusted balances)
+      │
+      ▼
+Controller (per menu)     ← Ambil data, hitung, kirim ke view
+      │
+      ▼
+Blade View (per menu)     ← Render HTML dengan @rupiah directive + Chart.js
+```
+
+---
+
+## Teknologi yang Digunakan
+
+| Teknologi | Kegunaan |
+|---|---|
+| Laravel 13 | Framework PHP (MVC, Eloquent, Blade, routing) |
+| MySQL | Database penyimpanan data akuntansi |
+| Tailwind CSS (CDN) | Styling antarmuka |
+| Chart.js (CDN) | Grafik dashboard (donut, bar, pie) |
+| Font Awesome (CDN) | Ikon antarmuka |
+
+---
+
+## Referensi Kasus Studi
+
+Kasus Perusahaan Jasa **"Anugerah Sakti"** — Kelompok 2  
+Periode: **April 2008** | Mata Kuliah: Pengantar Akuntansi
