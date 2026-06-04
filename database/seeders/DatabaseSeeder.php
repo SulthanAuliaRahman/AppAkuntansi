@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             JurnalSeeder::class,
             EntriPenyesuaianSeeder::class,
             PengaturanSeeder::class,
+            JenisAkunSeeder::class,
         ]);
     }
 }

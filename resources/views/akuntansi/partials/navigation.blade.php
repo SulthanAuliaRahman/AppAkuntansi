@@ -1,6 +1,7 @@
 @php
 $tabs = [
     ['label' => 'Dashboard',            'route' => 'akuntansi.dashboard',    'icon' => 'fa-gauge-high'],
+    ['label' => 'Klasifikasi Akun',            'route' => 'akuntansi.klasifikasi.index',    'icon' => 'fa-file-invoice-dollar'],
     ['label' => '1. Jurnal Umum',       'route' => 'akuntansi.jurnal',       'icon' => 'fa-book-open'],
     ['label' => '2. Buku Besar',        'route' => 'akuntansi.bukubesar',    'icon' => 'fa-folder-closed'],
     ['label' => '3. Neraca Saldo',      'route' => 'akuntansi.neracasaldo',  'icon' => 'fa-scale-balanced'],

@@ -9,10 +9,13 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\NeracaSaldoController;
 use App\Http\Controllers\PenyesuaianController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KlasifikasiController;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard (halaman utama)
 Route::get('/', [DashboardController::class, 'index'])->name('akuntansi.dashboard');
+
+Route::resource('klasifikasi', KlasifikasiController::class)->names('akuntansi.klasifikasi');
 
 // Jurnal Umum
 Route::get('/jurnal',              [JurnalController::class, 'index'])->name('akuntansi.jurnal');
