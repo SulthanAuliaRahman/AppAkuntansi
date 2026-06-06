@@ -38,10 +38,22 @@ class AkuntansiService
 
     public function getTransactions(): array
     {
-        $jurnals = Jurnal::with('details')
-            ->orderByRaw('DATE(tanggal) ASC')
-            ->orderBy('id', 'asc')
-            ->get();
+       $driver = \DB::connection()->getDriverName();
+
+        // 2. Siapkan query dasar pengambilan data Jurnal Umum beserta detailnya
+        $query = Jurnal::with('details');
+
+        // 3. LOGIKA SMART OVEN: Sesuaikan cara urut tanggal berdasarkan merk database
+        if ($driver === 'pgsql') {
+            // Jalur aman tanpa crash untuk PostgreSQL ketat di laptop yanto
+            $query->orderBy('tanggal', 'asc');
+        } else {
+            // Jalur asli bawaan proyek awal menggunakan MySQL/SQLite untuk teman-temanmu
+            $query->orderByRaw('DATE(tanggal) ASC');
+        }
+
+        // 4. Terakhir, urutkan berdasarkan ID lalu ambil datanya
+        $jurnals = $query->orderBy('id', 'asc')->get();
 
         return $jurnals->map(function ($jurnal) {
             $details = $jurnal->details;

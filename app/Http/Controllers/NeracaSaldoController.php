@@ -3,13 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Services\AkuntansiService;
+use Illuminate\Http\Request;
 
 class NeracaSaldoController extends Controller
 {
     public function __construct(private AkuntansiService $service) {}
 
-    public function index()
+    public function index(Request $request)
     {
+
+        
+
+
+        // 1. Ambil data dasar konfigurasi akun dan mutasi buku besar
         $accounts     = $this->service->getAccountsConfig();
         $transactions = $this->service->getTransactions();
         $ledgers      = $this->service->calculateLedgers($transactions);
@@ -18,22 +24,30 @@ class NeracaSaldoController extends Controller
         $totalDebit  = 0;
         $totalCredit = 0;
 
+        // 2. Looping setiap akun untuk diambil "Final Balance" atau Saldo Akhirnya
         foreach ($accounts as $code => $config) {
-            $bal    = end($ledgers[$code])['balance'];
+            $entries = $ledgers[$code] ?? [];
+
+            // Ambil saldo akhir persis seperti cara Buku Besar mengambilnya
+            $finalBalance = empty($entries) ? 0 : end($entries)['balance'];
+
             $debit  = 0;
             $credit = 0;
 
-            if ($config['normal'] === 'debit' && $bal > 0) {
-                $debit      = $bal;
-                $totalDebit += $bal;
-            } elseif ($config['normal'] === 'credit' && $bal > 0) {
-                $credit      = $bal;
-                $totalCredit += $bal;
+            // 3. Tentukan posisi kolom berdasarkan saldo normal akun tersebut
+            if ($config['normal'] === 'debit') {
+                $debit       = $finalBalance;
+                $totalDebit += $finalBalance;
+            } else {
+                $credit      = $finalBalance;
+                $totalCredit += $finalBalance;
             }
 
+            // Masukkan ke array rows untuk dikirim ke template Blade
             $rows[] = compact('code', 'config', 'debit', 'credit');
         }
 
+        // 4. Kirim ke view tanpa mengubah variabel aslinya (format warna & bentuk tetap aman)
         return view('akuntansi.neraca-saldo', compact('rows', 'totalDebit', 'totalCredit'));
     }
 }
