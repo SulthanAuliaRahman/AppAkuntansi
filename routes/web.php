@@ -10,12 +10,21 @@ use App\Http\Controllers\NeracaSaldoController;
 use App\Http\Controllers\PenyesuaianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\KlasifikasiController;
+use App\Http\Controllers\SaldoAwalController;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard (halaman utama)
 Route::get('/', [DashboardController::class, 'index'])->name('akuntansi.dashboard');
 
 Route::resource('klasifikasi', KlasifikasiController::class)->names('akuntansi.klasifikasi');
+
+// Saldo Awal
+Route::get('/saldo-awal',          [SaldoAwalController::class, 'index'])->name('akuntansi.saldoawal');
+Route::post('/saldo-awal',         [SaldoAwalController::class, 'store'])->name('akuntansi.saldoawal.store');
+Route::get('/saldo-awal/{kodeAkun}/edit', [SaldoAwalController::class, 'edit'])->name('akuntansi.saldoawal.edit');
+Route::put('/saldo-awal/{kodeAkun}', [SaldoAwalController::class, 'update'])->name('akuntansi.saldoawal.update');
+Route::delete('/saldo-awal/{kodeAkun}', [SaldoAwalController::class, 'destroy'])->name('akuntansi.saldoawal.destroy');
+Route::post('/saldo-awal/bulk-update', [SaldoAwalController::class, 'updateBulk'])->name('akuntansi.saldoawal.bulk');
 
 // Jurnal Umum
 Route::get('/jurnal',              [JurnalController::class, 'index'])->name('akuntansi.jurnal');
