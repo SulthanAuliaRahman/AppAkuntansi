@@ -15,6 +15,7 @@ class JenisAkunSeeder extends Seeder
         $data = [
             ['kode' => '1.1', 'nama' => 'Asset Lancar'],
             ['kode' => '1.2', 'nama' => 'Asset Tetap'],
+            ['kode' => '1.3', 'nama' => 'Asset Tidak Berwujud'],
             ['kode' => '2.1', 'nama' => 'Liabilitas Jangka Pendek'],
             ['kode' => '2.2', 'nama' => 'Hutang Jangka Panjang'],
             ['kode' => '3.1', 'nama' => 'Modal'],
