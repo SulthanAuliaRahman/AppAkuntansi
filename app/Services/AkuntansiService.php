@@ -12,12 +12,15 @@ class AkuntansiService
 {
     public function getAccountsConfig(): array
     {
-        return Akuns::all()
+        return Akuns::with('jenisAkun')
+            ->get()
             ->keyBy('kode_akun')
             ->map(fn($a) => [
-                'name'   => $a->nama_akun,
-                'type'   => 'general',
-                'normal' => strtolower($a->saldo_normal === 'DEBET' ? 'debit' : 'credit'),
+                'name'       => $a->nama_akun,
+                'type'       => 'general',
+                'normal'     => strtolower($a->saldo_normal === 'DEBET' ? 'debit' : 'credit'),
+                'class'      => $a->jenisAkun?->nama ?? 'Unknown',
+                'classCode'  => $a->jenisAkun?->kode ?? '',
             ])
             ->toArray();
     }
