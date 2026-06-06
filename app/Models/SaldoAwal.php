@@ -11,6 +11,6 @@ class SaldoAwal extends Model
 
     public function akun()
     {
-        return $this->belongsTo(Akun::class, 'kode_akun', 'kode');
+        return $this->belongsTo(Akuns::class, 'kode_akun', 'kode_akun');
     }
 }

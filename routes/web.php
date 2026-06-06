@@ -20,6 +20,8 @@ Route::resource('klasifikasi', KlasifikasiController::class)->names('akuntansi.k
 // Jurnal Umum
 Route::get('/jurnal',              [JurnalController::class, 'index'])->name('akuntansi.jurnal');
 Route::post('/jurnal',             [JurnalController::class, 'store'])->name('akuntansi.jurnal.store');
+Route::put('/jurnal/{jurnal}',      [JurnalController::class, 'update'])->name('akuntansi.jurnal.update');
+Route::get('/jurnal/{jurnal}/details', [JurnalController::class, 'details'])->name('akuntansi.jurnal.details');
 Route::delete('/jurnal/{jurnal}',   [JurnalController::class, 'destroy'])->name('akuntansi.jurnal.destroy');
 Route::post('/reset',              [JurnalController::class, 'reset'])->name('akuntansi.reset');
 

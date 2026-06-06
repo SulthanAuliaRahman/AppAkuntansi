@@ -13,11 +13,11 @@ class EntriPenyesuaian extends Model
 
     public function akunDebet()
     {
-        return $this->belongsTo(Akun::class, 'kode_akun_debet', 'kode');
+        return $this->belongsTo(Akuns::class, 'kode_akun_debet', 'kode_akun');
     }
 
     public function akunKredit()
     {
-        return $this->belongsTo(Akun::class, 'kode_akun_kredit', 'kode');
+        return $this->belongsTo(Akuns::class, 'kode_akun_kredit', 'kode_akun');
     }
 }

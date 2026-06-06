@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Akun;
+use App\Models\Akuns;
 use App\Models\EntriPenyesuaian;
 use App\Models\Jurnal;
 use App\Models\Pengaturan;
@@ -12,12 +12,12 @@ class AkuntansiService
 {
     public function getAccountsConfig(): array
     {
-        return Akun::all()
-            ->keyBy('kode')
+        return Akuns::all()
+            ->keyBy('kode_akun')
             ->map(fn($a) => [
-                'name'   => $a->nama,
-                'type'   => $a->tipe,
-                'normal' => $a->normal,
+                'name'   => $a->nama_akun,
+                'type'   => 'general',
+                'normal' => strtolower($a->saldo_normal === 'DEBET' ? 'debit' : 'credit'),
             ])
             ->toArray();
     }
@@ -35,18 +35,54 @@ class AkuntansiService
 
     public function getTransactions(): array
     {
-        return Jurnal::orderBy('id')
-            ->get()
-            ->map(fn($j) => [
-                'id'        => $j->id,
-                'date'      => $j->tanggal,
-                'desc'      => $j->keterangan,
-                'debitAcc'  => $j->akun_debet,
-                'creditAcc' => $j->akun_kredit,
-                'amount'    => (int) $j->jumlah,
-                'is_static' => $j->is_static,
-            ])
-            ->toArray();
+        $jurnals = Jurnal::with('details')
+            ->orderByRaw('DATE(tanggal) ASC')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return $jurnals->map(function ($jurnal) {
+            $details = $jurnal->details;
+
+            // Aggregate semua baris debet dan kredit — bukan hanya first()
+            $totalDebet  = (int) $details->where('type', 'debet')->sum('jumlah');
+            $totalKredit = (int) $details->where('type', 'kredit')->sum('jumlah');
+
+            // Representasi akun utama untuk tampilan (akun pertama tiap sisi)
+            $debitDetail  = $details->where('type', 'debet')->first();
+            $kreditDetail = $details->where('type', 'kredit')->first();
+
+            if (!$debitDetail || !$kreditDetail) {
+                return null;
+            }
+
+            return [
+                'id'           => $jurnal->id,
+                'date'         => $this->formatTanggal($jurnal->tanggal),
+                'desc'         => $jurnal->keterangan,
+                'is_static'    => $jurnal->is_static,
+                // Akun representatif untuk kolom Ref di tabel
+                'debitAcc'     => $debitDetail->akun_kode,
+                'creditAcc'    => $kreditDetail->akun_kode,
+                // Amount masing-masing sisi — bisa berbeda jika multi-entry
+                'debitAmount'  => $totalDebet,
+                'creditAmount' => $totalKredit,
+                // Semua detail entries untuk keperluan ledger / buku besar
+                'entries'      => $details->map(fn($d) => [
+                    'account' => $d->akun_kode,
+                    'type'    => $d->type,
+                    'amount'  => (int) $d->jumlah,
+                ])->values()->toArray(),
+            ];
+        })->filter()->values()->toArray();
+    }
+
+    private function formatTanggal($tanggal): string
+    {
+        try {
+            return \Carbon\Carbon::parse($tanggal)->translatedFormat('d M');
+        } catch (\Exception $e) {
+            return (string) $tanggal;
+        }
     }
 
     public function isAdjustmentsEnabled(): bool
@@ -60,6 +96,7 @@ class AkuntansiService
         $initialBalances = $this->getInitialBalances();
         $ledgers         = [];
 
+        // Inisialisasi ledger dengan saldo awal tiap akun
         foreach ($accounts as $code => $config) {
             $init    = $initialBalances[$code] ?? ['debit' => 0, 'credit' => 0];
             $balance = $config['normal'] === 'debit'
@@ -76,27 +113,68 @@ class AkuntansiService
         }
 
         foreach ($transactions as $t) {
-            // Sisi Debet
-            $lastBal = end($ledgers[$t['debitAcc']])['balance'];
-            $isDebit = $accounts[$t['debitAcc']]['normal'] === 'debit';
-            $ledgers[$t['debitAcc']][] = [
-                'date'    => $t['date'],
-                'desc'    => $t['desc'],
-                'debit'   => $t['amount'],
-                'credit'  => 0,
-                'balance' => $lastBal + ($isDebit ? $t['amount'] : -$t['amount']),
-            ];
+            // Format baru: tiap transaksi punya array 'entries' dengan per-akun detail
+            if (!empty($t['entries'])) {
+                foreach ($t['entries'] as $entry) {
+                    $acc = $entry['account'];
+                    if (!isset($ledgers[$acc])) continue;
 
-            // Sisi Kredit
-            $lastBal2 = end($ledgers[$t['creditAcc']])['balance'];
-            $isDebit2 = $accounts[$t['creditAcc']]['normal'] === 'debit';
-            $ledgers[$t['creditAcc']][] = [
-                'date'    => $t['date'],
-                'desc'    => $t['desc'],
-                'debit'   => 0,
-                'credit'  => $t['amount'],
-                'balance' => $lastBal2 + ($isDebit2 ? -$t['amount'] : $t['amount']),
-            ];
+                    $lastBal = end($ledgers[$acc])['balance'] ?? 0;
+                    $isDebit = ($accounts[$acc]['normal'] ?? 'debit') === 'debit';
+                    $amount  = (int) $entry['amount'];
+
+                    if ($entry['type'] === 'debet') {
+                        $ledgers[$acc][] = [
+                            'date'    => $t['date'],
+                            'desc'    => $t['desc'],
+                            'debit'   => $amount,
+                            'credit'  => 0,
+                            'balance' => $lastBal + ($isDebit ? $amount : -$amount),
+                        ];
+                    } else {
+                        $ledgers[$acc][] = [
+                            'date'    => $t['date'],
+                            'desc'    => $t['desc'],
+                            'debit'   => 0,
+                            'credit'  => $amount,
+                            'balance' => $lastBal + ($isDebit ? -$amount : $amount),
+                        ];
+                    }
+                }
+                continue;
+            }
+
+            // Legacy format fallback (format lama tanpa 'entries')
+            if (!isset($t['debitAcc'], $t['creditAcc'])) continue;
+
+            $debitAmount  = (int) ($t['debitAmount']  ?? $t['amount'] ?? 0);
+            $creditAmount = (int) ($t['creditAmount'] ?? $t['amount'] ?? 0);
+
+            $dAcc = $t['debitAcc'];
+            if (isset($ledgers[$dAcc])) {
+                $lastBal = end($ledgers[$dAcc])['balance'] ?? 0;
+                $isDebit = ($accounts[$dAcc]['normal'] ?? 'debit') === 'debit';
+                $ledgers[$dAcc][] = [
+                    'date'    => $t['date'],
+                    'desc'    => $t['desc'],
+                    'debit'   => $debitAmount,
+                    'credit'  => 0,
+                    'balance' => $lastBal + ($isDebit ? $debitAmount : -$debitAmount),
+                ];
+            }
+
+            $cAcc = $t['creditAcc'];
+            if (isset($ledgers[$cAcc])) {
+                $lastBal = end($ledgers[$cAcc])['balance'] ?? 0;
+                $isDebit = ($accounts[$cAcc]['normal'] ?? 'debit') === 'debit';
+                $ledgers[$cAcc][] = [
+                    'date'    => $t['date'],
+                    'desc'    => $t['desc'],
+                    'debit'   => 0,
+                    'credit'  => $creditAmount,
+                    'balance' => $lastBal + ($isDebit ? -$creditAmount : $creditAmount),
+                ];
+            }
         }
 
         return $ledgers;
@@ -120,13 +198,17 @@ class AkuntansiService
 
         if ($adjustmentsEnabled) {
             EntriPenyesuaian::all()->each(function ($row) use (&$adjusted) {
-                $adjusted[$row->kode_akun_debet]['debitAdj']   += (int) $row->jumlah;
-                $adjusted[$row->kode_akun_kredit]['creditAdj'] += (int) $row->jumlah;
+                if (isset($adjusted[$row->kode_akun_debet])) {
+                    $adjusted[$row->kode_akun_debet]['debitAdj'] += (int) $row->jumlah;
+                }
+                if (isset($adjusted[$row->kode_akun_kredit])) {
+                    $adjusted[$row->kode_akun_kredit]['creditAdj'] += (int) $row->jumlah;
+                }
             });
         }
 
         foreach ($adjusted as $code => $data) {
-            $isDebit                          = $accounts[$code]['normal'] === 'debit';
+            $isDebit                            = ($accounts[$code]['normal'] ?? 'debit') === 'debit';
             $adjusted[$code]['adjustedBalance'] = $isDebit
                 ? $data['preAdjustment'] + $data['debitAdj'] - $data['creditAdj']
                 : $data['preAdjustment'] - $data['debitAdj'] + $data['creditAdj'];

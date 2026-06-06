@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('saldo_awal', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_akun', 10);
+            $table->string('kode_akun', 20);
             $table->bigInteger('debet')->default(0);
             $table->bigInteger('kredit')->default(0);
             $table->timestamps();
-
-            $table->foreign('kode_akun')->references('kode')->on('akun')->onDelete('cascade');
         });
     }
 

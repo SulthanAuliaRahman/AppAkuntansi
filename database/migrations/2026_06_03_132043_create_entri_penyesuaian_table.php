@@ -13,14 +13,11 @@ return new class extends Migration
     {
         Schema::create('entri_penyesuaian', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_akun_debet', 10);
-            $table->string('kode_akun_kredit', 10);
+            $table->string('kode_akun_debet', 20);
+            $table->string('kode_akun_kredit', 20);
             $table->bigInteger('jumlah');
             $table->string('keterangan', 255);
             $table->timestamps();
-
-            $table->foreign('kode_akun_debet')->references('kode')->on('akun');
-            $table->foreign('kode_akun_kredit')->references('kode')->on('akun');
         });
     }
 

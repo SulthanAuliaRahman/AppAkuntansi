@@ -3,24 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Jurnal extends Model
 {
     protected $table    = 'jurnal';
-    protected $fillable = ['tanggal', 'keterangan', 'akun_debet', 'akun_kredit', 'jumlah', 'is_static'];
+    protected $fillable = ['tanggal', 'keterangan', 'is_static'];
 
     protected $casts = [
         'is_static' => 'boolean',
-        'jumlah'    => 'integer',
     ];
 
-    public function akunDebet()
+    public function details(): HasMany
     {
-        return $this->belongsTo(Akun::class, 'akun_debet', 'kode');
-    }
-
-    public function akunKredit()
-    {
-        return $this->belongsTo(Akun::class, 'akun_kredit', 'kode');
+        return $this->hasMany(DetailJurnal::class);
     }
 }
