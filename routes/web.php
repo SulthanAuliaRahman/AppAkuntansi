@@ -40,9 +40,15 @@ Route::get('/buku-besar',          [BukuBesarController::class, 'index'])->name(
 // Neraca Saldo
 Route::get('/neraca-saldo',        [NeracaSaldoController::class, 'index'])->name('akuntansi.neracasaldo');
 
-// Jurnal Penyesuaian
-Route::get('/penyesuaian',         [PenyesuaianController::class, 'index'])->name('akuntansi.penyesuaian');
-Route::post('/penyesuaian/toggle', [PenyesuaianController::class, 'toggle'])->name('akuntansi.penyesuaian.toggle');
+// Jurnal Penyesuaian (AJP Manual Mandiri)
+Route::get('/penyesuaian',             [PenyesuaianController::class, 'index'])->name('akuntansi.penyesuaian');
+Route::post('/penyesuaian',            [PenyesuaianController::class, 'store'])->name('akuntansi.penyesuaian.store');
+Route::get('/penyesuaian/{id}/details', [PenyesuaianController::class, 'getDetails'])->name('akuntansi.penyesuaian.details');
+Route::put('/penyesuaian/{id}',        [PenyesuaianController::class, 'update'])->name('akuntansi.penyesuaian.update');
+Route::delete('/penyesuaian/{id}',     [PenyesuaianController::class, 'destroy'])->name('akuntansi.penyesuaian.destroy');
+
+// HAPUS BARIS DI BAWAH INI:
+
 
 // Kertas Kerja
 Route::get('/kertas-kerja',        [KertasKerjaController::class, 'index'])->name('akuntansi.kertaskerja');

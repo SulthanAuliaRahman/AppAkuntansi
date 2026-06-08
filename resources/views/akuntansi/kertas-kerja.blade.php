@@ -12,11 +12,11 @@
 
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse table-fixed min-w-[1200px]">
+                <table class="w-full text-left border-collapse table-fixed min-w-[1350px]">
                     <thead>
                         <tr class="bg-slate-800 text-white uppercase text-[10px] font-bold tracking-wider border-b border-slate-700 text-center">
                             <th rowspan="2" class="py-3 px-4 text-left w-16">Ref</th>
-                            <th rowspan="2" class="py-3 px-4 text-left w-48">Nama Akun Perkiraan</th>
+                            <th rowspan="2" class="py-3 px-4 text-left w-52">Nama Akun Perkiraan</th>
                             <th colspan="2" class="py-2 px-3 border-l border-slate-700">Neraca Saldo</th>
                             <th colspan="2" class="py-2 px-3 border-l border-slate-700">Penyesuaian</th>
                             <th colspan="2" class="py-2 px-3 border-l border-slate-700">NSD</th>
@@ -36,14 +36,19 @@
                         <tr class="hover:bg-slate-50/80 transition-colors">
                             <td class="py-2.5 px-4 text-slate-500 font-semibold">{{ $row['code'] }}</td>
                             <td class="py-2.5 px-4 font-bold text-slate-800 truncate">{{ $row['config']['name'] }}</td>
+                            
                             <td class="py-2 px-2 text-right border-l border-slate-100">{{ $row['tbD'] > 0 ? 'Rp '.number_format($row['tbD'],0,',','.') : '-' }}</td>
                             <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['tbK'] > 0 ? 'Rp '.number_format($row['tbK'],0,',','.') : '-' }}</td>
+                            
                             <td class="py-2 px-2 text-right">{{ $row['ajeD'] > 0 ? 'Rp '.number_format($row['ajeD'],0,',','.') : '-' }}</td>
                             <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['ajeK'] > 0 ? 'Rp '.number_format($row['ajeK'],0,',','.') : '-' }}</td>
+                            
                             <td class="py-2 px-2 text-right">{{ $row['nsdD'] > 0 ? 'Rp '.number_format($row['nsdD'],0,',','.') : '-' }}</td>
                             <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['nsdK'] > 0 ? 'Rp '.number_format($row['nsdK'],0,',','.') : '-' }}</td>
+                            
                             <td class="py-2 px-2 text-right">{{ $row['lrD'] > 0 ? 'Rp '.number_format($row['lrD'],0,',','.') : '-' }}</td>
                             <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['lrK'] > 0 ? 'Rp '.number_format($row['lrK'],0,',','.') : '-' }}</td>
+                            
                             <td class="py-2 px-2 text-right">{{ $row['nD'] > 0 ? 'Rp '.number_format($row['nD'],0,',','.') : '-' }}</td>
                             <td class="py-2 px-2 text-right">{{ $row['nK'] > 0 ? 'Rp '.number_format($row['nK'],0,',','.') : '-' }}</td>
                         </tr>
@@ -63,6 +68,7 @@
                             <td class="py-3 px-2 text-right">@rupiah($sums['nD'])</td>
                             <td class="py-3 px-2 text-right">@rupiah($sums['nK'])</td>
                         </tr>
+                        
                         <tr class="bg-emerald-50 text-emerald-800">
                             <td colspan="2" class="py-3 px-4 text-right uppercase text-[10px] font-bold">Laba Bersih Operasional</td>
                             <td colspan="6" class="bg-white border-r border-slate-200"></td>
@@ -71,6 +77,7 @@
                             <td class="py-3 px-2 text-right font-bold">{{ !$isProfit ? 'Rp '.number_format(abs($neracaDiff),0,',','.') : '-' }}</td>
                             <td class="py-3 px-2 text-right font-bold">{{ $isProfit ? 'Rp '.number_format($neracaDiff,0,',','.') : '-' }}</td>
                         </tr>
+                        
                         <tr class="bg-indigo-900 text-white font-bold border-t-2 border-indigo-950">
                             <td colspan="2" class="py-3.5 px-4 text-right uppercase text-[10px]">Total Grand Balance</td>
                             <td class="py-3.5 px-2 text-right border-l">@rupiah($sums['tbD'])</td>
