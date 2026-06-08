@@ -5,41 +5,10 @@
     @include('akuntansi.partials.navigation')
 
     <div class="space-y-6">
-        <!-- Header -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-800">7. Jurnal Penutup (Closing Entries)</h2>
-                    <p class="text-sm text-slate-500">Menghapus saldo rekening nominal (Pendapatan & Beban) dan memindahkannya ke Modal</p>
-                </div>
-                <form action="{{ route('akuntansi.penutup.generate') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-check-circle"></i> Generate Jurnal Penutup
-                    </button>
-                </form>
-            </div>
+        <div>
+            <h2 class="text-xl font-bold text-slate-800">7. Jurnal Penutup (Closing Entries)</h2>
+            <p class="text-sm text-slate-500">Menghapus saldo rekening nominal (Pendapatan & Beban) dan memindahkannya ke Modal per 30 April 2008</p>
         </div>
-
-        <!-- Status Alert -->
-        @if ($isGenerated)
-            <div class="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
-                <span class="text-xl">✅</span>
-                <p class="text-sm font-semibold text-green-800">Jurnal Penutup sudah dibuat dan diposting ke Jurnal Umum</p>
-            </div>
-        @else
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
-                <span class="text-xl">⚠️</span>
-                <p class="text-sm font-semibold text-amber-800">Jurnal Penutup belum dibuat. Klik tombol di atas untuk generate otomatis.</p>
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
-                <span class="text-xl">✅</span>
-                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-            </div>
-        @endif
 
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div class="overflow-x-auto custom-scrollbar">

@@ -19,7 +19,6 @@ class JenisAkunSeeder extends Seeder
             ['kode' => '2.1', 'nama' => 'Liabilitas Jangka Pendek'],
             ['kode' => '2.2', 'nama' => 'Hutang Jangka Panjang'],
             ['kode' => '3.1', 'nama' => 'Modal'],
-            ['kode' => '3.2', 'nama' => 'Ikhtisar'],
             ['kode' => '4.1', 'nama' => 'Pendapatan'],
             ['kode' => '5.1', 'nama' => 'Beban'],
         ];
