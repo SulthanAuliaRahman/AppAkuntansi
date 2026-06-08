@@ -55,6 +55,7 @@ Route::get('/kertas-kerja',        [KertasKerjaController::class, 'index'])->nam
 
 // Laporan Keuangan
 Route::get('/laporan',             [LaporanController::class, 'index'])->name('akuntansi.laporan');
+Route::get('/laporan/print',       [LaporanController::class, 'print'])->name('akuntansi.laporan.print');
 
 // Jurnal Penutup
 Route::get('/jurnal-penutup',      [JurnalPenutupController::class, 'index'])->name('akuntansi.penutup');
