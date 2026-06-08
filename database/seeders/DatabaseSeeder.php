@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             AkunSeeder::class,
             SaldoAwalSeeder::class,
             JurnalSeeder::class,
-            EntriPenyesuaianSeeder::class,
             PengaturanSeeder::class,
         ]);
     }
