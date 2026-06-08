@@ -61,6 +61,7 @@ Route::get('/laporan-keuangan',    [LaporanKeuanganController::class, 'index'])-
 
 // Jurnal Penutup
 Route::get('/jurnal-penutup',      [JurnalPenutupController::class, 'index'])->name('akuntansi.penutup');
+Route::post('/jurnal-penutup/generate', [JurnalPenutupController::class, 'generate'])->name('akuntansi.penutup.generate');
 
 // Auth routes (dari Laravel Breeze)
 Route::get('/dashboard', function () {
