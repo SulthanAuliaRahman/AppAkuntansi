@@ -8,8 +8,7 @@ $tabs = [
     ['label' => '3. Neraca Saldo',      'route' => 'akuntansi.neracasaldo',  'icon' => 'fa-scale-balanced'],
     ['label' => '4. Penyesuaian',       'route' => 'akuntansi.penyesuaian',  'icon' => 'fa-sliders'],
     ['label' => '5. Kertas Kerja',      'route' => 'akuntansi.kertaskerja',  'icon' => 'fa-table-cells'],
-    ['label' => '6. Lap. Sebelum Penyesuaian', 'route' => 'akuntansi.laporan', 'icon' => 'fa-file-lines'],
-    ['label' => '6B. Laporan Keuangan', 'route' => 'akuntansi.laporan.keuangan', 'icon' => 'fa-file-invoice-dollar'],
+    ['label' => '6. Laporan Keuangan', 'route' => 'akuntansi.laporan.keuangan', 'icon' => 'fa-file-invoice-dollar'],
     ['label' => '7. Jurnal Penutup',    'route' => 'akuntansi.penutup',      'icon' => 'fa-box-archive'],
 ];
 @endphp
