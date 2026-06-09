@@ -52,22 +52,97 @@
                     <tbody class="text-sm divide-y divide-slate-100">
                         @forelse ($ajeRows as $t)
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="py-4 px-5 font-semibold text-slate-600">{{ $t['date'] }}</td>
-                            <td class="py-4 px-5">
-                                <div class="font-bold text-slate-800">{{ $accounts[$t['debitAcc']]['name'] ?? 'Akun tidak ditemukan' }}</div>
-                                <div class="pl-5 text-slate-500 italic mt-1 font-medium">{{ $accounts[$t['creditAcc']]['name'] ?? 'Akun tidak ditemukan' }}</div>
-                                <span class="text-xs text-indigo-600 block mt-1.5 font-medium">{{ $t['desc'] }}</span>
+                            <td class="py-4 px-5 font-semibold text-slate-600 align-top">{{ $t['date'] }}</td>
+                            
+                            <td class="py-4 px-5 align-top">
+                                {{-- Baris Pertama: Akun Utama yang Mempengaruhi (Selalu Cetak Tebal Hitam) --}}
+                                @if(isset($t['debits'][0]))
+                                    <div class="font-bold text-slate-800 mb-1.5">
+                                        {{ $t['debits'][0]->akun?->nama_akun ?? 'Akun tidak ditemukan' }}
+                                    </div>
+                                @elseif(isset($t['credits'][0]))
+                                    <div class="font-bold text-slate-800 mb-1.5">
+                                        {{ $t['credits'][0]->akun?->nama_akun ?? 'Akun tidak ditemukan' }}
+                                    </div>
+                                @endif
+                                
+                                {{-- Baris Sisa: Akun yang Dipengaruhi (Selalu Abu-abu Menjorok ke Dalam) --}}
+                                @foreach ($t['debits'] as $index => $d)
+                                    @if($index > 0 || !isset($t['debits'][0]))
+                                        <div class="pl-6 text-slate-500 italic font-medium mb-1.5">
+                                            {{ $d->akun?->nama_akun ?? 'Akun tidak ditemukan' }}
+                                        </div>
+                                    @endif
+                                @endforeach
+                                @foreach ($t['credits'] as $index => $c)
+                                    @if($index > 0 || isset($t['debits'][0]))
+                                        <div class="pl-6 text-slate-500 italic font-medium mb-1.5">
+                                            {{ $c->akun?->nama_akun ?? 'Akun tidak ditemukan' }}
+                                        </div>
+                                    @endif
+                                @endforeach
+                                
+                                <span class="text-xs text-indigo-600 block mt-2 font-semibold">{{ $t['desc'] }}</span>
                             </td>
-                            <td class="py-4 px-5">
-                                <div class="text-slate-600 font-bold">{{ $t['debitAcc'] }}</div>
-                                <div class="pl-5 text-slate-400 mt-1">{{ $t['creditAcc'] }}</div>
+                            
+                            <td class="py-4 px-5 align-top font-semibold text-slate-600">
+                                @if(isset($t['debits'][0]))
+                                    <div class="mb-1.5">{{ $t['debits'][0]->akun?->kode_akun ?? '-' }}</div>
+                                @elseif(isset($t['credits'][0]))
+                                    <div class="mb-1.5">{{ $t['credits'][0]->akun?->kode_akun ?? '-' }}</div>
+                                @endif
+
+                                @foreach ($t['debits'] as $index => $d)
+                                    @if($index > 0 || !isset($t['debits'][0]))
+                                        <div class="pl-6 mb-1.5 text-slate-400">{{ $d->akun?->kode_akun ?? '-' }}</div>
+                                    @endif
+                                @endforeach
+                                @foreach ($t['credits'] as $index => $c)
+                                    @if($index > 0 || isset($t['debits'][0]))
+                                        <div class="pl-6 mb-1.5 text-slate-400">{{ $c->akun?->kode_akun ?? '-' }}</div>
+                                    @endif
+                                @endforeach
                             </td>
-                            <td class="py-4 px-5 text-right font-semibold text-slate-800">@rupiah($t['debitAmount'])</td>
-                            <td class="py-4 px-5 text-right font-semibold text-slate-800">
-                                <div class="h-6"></div>
-                                <div>@rupiah($t['creditAmount'])</div>
+                            
+                            <td class="py-4 px-5 text-right align-top font-semibold text-slate-800">
+                                @if(isset($t['debits'][0]))
+                                    <div class="mb-1.5">@rupiah($t['debits'][0]->nominal)</div>
+                                @elseif(isset($t['credits'][0]))
+                                    <div class="mb-1.5 text-slate-300">-</div>
+                                @endif
+
+                                @foreach ($t['debits'] as $index => $d)
+                                    @if($index > 0 || !isset($t['debits'][0]))
+                                        <div class="mb-1.5">@rupiah($d->nominal)</div>
+                                    @endif
+                                @endforeach
+                                @foreach ($t['credits'] as $index => $c)
+                                    @if($index > 0 || isset($t['debits'][0]))
+                                        <div class="mb-1.5 text-slate-300">-</div>
+                                    @endif
+                                @endforeach
                             </td>
-                            <td class="py-4 px-5 text-center">
+                            
+                            <td class="py-4 px-5 text-right align-top font-semibold text-slate-800">
+                                @if(isset($t['debits'][0]))
+                                    <div class="mb-1.5 text-slate-300">-</div>
+                                @elseif(isset($t['credits'][0]))
+                                    <div class="mb-1.5">@rupiah($t['credits'][0]->nominal)</div>
+                                @endif
+
+                                @foreach ($t['debits'] as $index => $d)
+                                    @if($index > 0 || !isset($t['debits'][0]))
+                                        <div class="mb-1.5 text-slate-300">-</div>
+                                    @endif
+                                @endforeach
+                                @foreach ($t['credits'] as $index => $c)
+                                    @if($index > 0 || isset($t['debits'][0]))
+                                        <div class="mb-1.5">@rupiah($c->nominal)</div>
+                                    @endif
+                                @endforeach
+                            </td>
+                            
+                            <td class="py-4 px-5 text-center align-top">
                                 <div class="flex justify-center gap-2">
                                     <button type="button"
                                         onclick="openEditModal({{ $t['id'] }})"
@@ -135,16 +210,26 @@
                     </div>
                 </div>
 
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Entri Baris Akun</label>
-                        <button type="button" onclick="addEntryRow('add-entries-container', 'add')"
-                            class="text-indigo-600 hover:text-indigo-700 text-xs font-semibold flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-all">
-                            <i class="fa-solid fa-plus"></i> Tambah Baris
-                        </button>
+                <div class="space-y-4">
+                    {{-- Kelompok Akun Utama --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">1. Akun Yang Mempengaruhi (Utama)</label>
+                        <div id="add-primary-container" class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                            </div>
                     </div>
 
-                    <div id="add-entries-container" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 min-h-[80px]">
+                    {{-- Kelompok Akun Turunan --}}
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">2. Akun Yang Dipengaruhi (Turunan)</label>
+                            <button type="button" onclick="addEntryRow('add-entries-container', 'add')"
+                                class="text-indigo-600 hover:text-indigo-700 text-xs font-bold flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-all">
+                                <i class="fa-solid fa-plus"></i> Tambah Baris
+                            </button>
+                        </div>
+
+                        <div id="add-entries-container" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 min-h-[60px]">
+                            </div>
                     </div>
 
                     {{-- Balance indicator --}}
@@ -212,16 +297,26 @@
                     </div>
                 </div>
 
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Entri Baris Akun</label>
-                        <button type="button" onclick="addEntryRow('edit-entries-container', 'edit')"
-                            class="text-indigo-600 hover:text-indigo-700 text-xs font-semibold flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-all">
-                            <i class="fa-solid fa-plus"></i> Tambah Baris
-                        </button>
+                <div class="space-y-4">
+                    {{-- Kelompok Akun Utama Edit --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">1. Akun Yang Mempengaruhi (Utama)</label>
+                        <div id="edit-primary-container" class="bg-slate-100 p-3 rounded-xl border border-slate-200">
+                        </div>
                     </div>
 
-                    <div id="edit-entries-container" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 min-h-[80px]">
+                    {{-- Kelompok Akun Turunan Edit --}}
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">2. Akun Yang Dipengaruhi (Turunan)</label>
+                            <button type="button" onclick="addEntryRow('edit-entries-container', 'edit')"
+                                class="text-indigo-600 hover:text-indigo-700 text-xs font-bold flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-all">
+                                <i class="fa-solid fa-plus"></i> Tambah Baris
+                            </button>
+                        </div>
+
+                        <div id="edit-entries-container" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 min-h-[60px]">
+                        </div>
                     </div>
 
                     {{-- Balance indicator --}}
@@ -274,11 +369,19 @@ function akunOptions(selectedId = '') {
 }
 
 let _rowId = 0;
-function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '') {
+function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '', isPrimary = false) {
     const id  = ++_rowId;
     const key = `entries[${id}]`;
     const row = document.createElement('div');
     row.className = 'grid grid-cols-12 gap-2 items-center entry-row';
+
+    // Jika akun utama, sembunyikan tombol sampah pembasmi baris
+    const deleteButtonHTML = isPrimary 
+        ? `<div class="col-span-1 flex justify-center text-indigo-400"><i class="fa-solid fa-key text-xs"></i></div>`
+        : `<button type="button" title="Hapus baris"
+            class="col-span-1 remove-btn text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-all flex items-center justify-center">
+            <i class="fa-solid fa-trash-can text-sm"></i>
+           </button>`;
 
     row.innerHTML = `
         <select name="${key}[posisi]"
@@ -298,16 +401,15 @@ function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '') {
             placeholder="Nominal" min="1000" step="1000"
             class="col-span-3 entry-amount bg-white border border-slate-200 px-2 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
 
-        <button type="button" title="Hapus baris"
-            class="col-span-1 remove-btn text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-all flex items-center justify-center">
-            <i class="fa-solid fa-trash-can text-sm"></i>
-        </button>
+        ${deleteButtonHTML}
     `;
 
-    row.querySelector('.remove-btn').addEventListener('click', () => {
-        row.remove();
-        refreshTotals(prefix);
-    });
+    if (!isPrimary) {
+        row.querySelector('.remove-btn').addEventListener('click', () => {
+            row.remove();
+            refreshTotals(prefix);
+        });
+    }
 
     row.querySelectorAll('.entry-type, .entry-akun, .entry-amount').forEach(el => {
         el.addEventListener('input',  () => refreshTotals(prefix));
@@ -319,15 +421,15 @@ function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '') {
 
 function addEntryRow(containerId, prefix) {
     const container = document.getElementById(containerId);
-    container.appendChild(buildEntryRow(prefix));
+    container.appendChild(buildEntryRow(prefix, prefix === 'add' ? 'KREDIT' : 'DEBET'));
     refreshTotals(prefix);
 }
 
 function refreshTotals(prefix) {
-    const containerId = prefix + '-entries-container';
     let debit = 0, credit = 0;
 
-    document.querySelectorAll(`#${containerId} .entry-row`).forEach(row => {
+    // Hitung gabungan dari kontainer utama maupun kontainer turunan bawah
+    document.querySelectorAll(`#${prefix}-primary-container .entry-row, #${prefix}-entries-container .entry-row`).forEach(row => {
         const posisi = row.querySelector('.entry-type').value;
         const nominal = parseInt(row.querySelector('.entry-amount').value) || 0;
         if (posisi === 'DEBET') debit += nominal;
@@ -388,9 +490,7 @@ function refreshTotals(prefix) {
 }
 
 function validateForm(prefix, e) {
-    const containerId = prefix + '-entries-container';
     const errors = [];
-
     const date = document.getElementById(`${prefix}-date`)?.value;
     const desc = document.getElementById(`${prefix}-desc`)?.value;
 
@@ -398,7 +498,7 @@ function validateForm(prefix, e) {
     if (!desc || !desc.trim()) errors.push('Keterangan wajib diisi.');
 
     let debit = 0, credit = 0, rowIndex = 0;
-    document.querySelectorAll(`#${containerId} .entry-row`).forEach(row => {
+    document.querySelectorAll(`#${prefix}-primary-container .entry-row, #${prefix}-entries-container .entry-row`).forEach(row => {
         rowIndex++;
         const posisi = row.querySelector('.entry-type').value;
         const akun = row.querySelector('.entry-akun').value;
@@ -412,10 +512,7 @@ function validateForm(prefix, e) {
     });
 
     if (rowIndex < 2) errors.push('Minimal harus menyertakan 2 baris entri (Debet & Kredit).');
-
-    if (debit !== credit) {
-        errors.push(`Jurnal tidak balance! Selisih: ${formatRupiah(Math.abs(debit - credit))}.`);
-    }
+    if (debit !== credit) errors.push(`Jurnal tidak balance! Selisih: ${formatRupiah(Math.abs(debit - credit))}.`);
 
     if (errors.length) {
         e.preventDefault();
@@ -441,7 +538,6 @@ function showValidationError(errors) {
     if (activeForm) {
         const btnRow = activeForm.querySelector('.pt-2.flex.justify-end');
         activeForm.insertBefore(box, btnRow);
-        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
 
@@ -467,10 +563,16 @@ window.closeModal = function(prefix) {
 }
 
 function openAddModal() {
-    const container = document.getElementById('add-entries-container');
-    container.innerHTML = '';
-    container.appendChild(buildEntryRow('add', 'DEBET'));
-    container.appendChild(buildEntryRow('add', 'KREDIT'));
+    // Reset kontainer pengisi
+    document.getElementById('add-primary-container').innerHTML = '';
+    document.getElementById('add-entries-container').innerHTML = '';
+    
+    // Pasang 1 Baris Utama di kontainer atas (Mempengaruhi)
+    document.getElementById('add-primary-container').appendChild(buildEntryRow('add', 'DEBET', '', '', true));
+    
+    // Pasang 1 Baris Pengikut di kontainer bawah (Dipengaruhi)
+    document.getElementById('add-entries-container').appendChild(buildEntryRow('add', 'KREDIT', '', '', false));
+    
     refreshTotals('add');
     document.getElementById('add-date').value = '';
     document.getElementById('add-desc').value = '';
@@ -485,33 +587,32 @@ document.getElementById('add-form').addEventListener('submit', function(e) {
 function openEditModal(ajpId) {
     document.getElementById('edit-loading').classList.remove('hidden');
     document.getElementById('edit-form-wrapper').classList.add('hidden');
+    document.getElementById('edit-primary-container').innerHTML = '';
     document.getElementById('edit-entries-container').innerHTML = '';
     document.querySelectorAll('.modal-validation-error').forEach(el => el.remove());
 
     openModal('edit');
 
     fetch(`/penyesuaian/${ajpId}/details`)
-        .then(r => {
-            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            return r.json();
-        })
+        .then(r => r.json())
         .then(data => {
             document.getElementById('edit-date').value = data.tanggal;
             document.getElementById('edit-desc').value = data.keterangan;
             document.getElementById('edit-form').action = `/penyesuaian/${data.id}`;
 
-            const container = document.getElementById('edit-entries-container');
-            container.innerHTML = '';
+            const primaryContainer = document.getElementById('edit-primary-container');
+            const entriesContainer = document.getElementById('edit-entries-container');
 
             if (data.details && data.details.length > 0) {
-                data.details.forEach(d => {
-                    container.appendChild(
-                        buildEntryRow('edit', d.posisi, d.akun_id, d.nominal)
-                    );
+                data.details.forEach((d, idx) => {
+                    if(idx === 0) {
+                        // Baris indeks 0 masuk ke kontainer utama atas
+                        primaryContainer.appendChild(buildEntryRow('edit', d.posisi, d.akun_id, d.nominal, true));
+                    } else {
+                        // Sisa indeks masuk ke kontainer pengikut bawah
+                        entriesContainer.appendChild(buildEntryRow('edit', d.posisi, d.akun_id, d.nominal, false));
+                    }
                 });
-            } else {
-                container.appendChild(buildEntryRow('edit', 'DEBET'));
-                container.appendChild(buildEntryRow('edit', 'KREDIT'));
             }
 
             refreshTotals('edit');
@@ -519,12 +620,7 @@ function openEditModal(ajpId) {
             document.getElementById('edit-form-wrapper').classList.remove('hidden');
         })
         .catch(err => {
-            console.error(err);
-            document.getElementById('edit-loading').innerHTML = `
-                <i class="fa-solid fa-circle-exclamation text-2xl text-rose-400"></i>
-                <p class="text-sm font-medium text-rose-500">Gagal mengambil data penyesuaian.</p>
-                <button onclick="closeModal('edit')" class="mt-2 text-xs text-slate-500 underline">Tutup</button>
-            `;
+            document.getElementById('edit-loading').innerHTML = `<p class="text-sm font-medium text-rose-500">Gagal memuat data.</p>`;
         });
 }
 
@@ -538,8 +634,5 @@ document.getElementById('edit-form').addEventListener('submit', function(e) {
         if (e.target === this) closeModal(id.replace('-modal', ''));
     });
 });
-
-const flash = document.getElementById('flash-success');
-if (flash) setTimeout(() => flash.remove(), 4000);
 </script>
 @endsection
