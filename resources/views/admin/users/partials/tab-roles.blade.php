@@ -22,11 +22,11 @@
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-3 px-5 font-medium text-slate-400">{{ $role['id'] }}</td>
                         <td class="py-3 px-5">
-                            <span class="{{ $role['badge'] }} text-xs font-bold px-2.5 py-1 rounded-lg">{{ $role['nama'] }}</span>
+                            <span class="{{ $role['badge'] }} text-xs font-bold px-2.5 py-1 rounded-lg">{{ $role['nama_role'] }}</span>
                         </td>
-                        <td class="py-3 px-5 text-slate-600">{{ $role['desc'] }}</td>
+                        <td class="py-3 px-5 text-slate-600">{{ $role['deskripsi'] }}</td>
                         <td class="py-3 px-5 text-center">
-                            <button onclick="openModal('modal-role', {{ $role['id'] }})" title="Edit Role" class="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors">
+                            <button onclick="openModal('modal-role', true, '{{ route('admin.roles.update', $role->id) }}')" title="Edit Role" class="...">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                         </td>

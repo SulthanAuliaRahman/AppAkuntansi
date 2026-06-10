@@ -18,6 +18,14 @@ return new class extends Migration
             $table->timestamps();
             $table->unique(['user_id', 'akun_id'], 'cegah_duplikat_user_akses');
         });
+
+        Schema::create('roles_akses_akun', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
+            $table->foreignId('akuns_id')->constrained('akuns')->cascadeOnDelete();
+            $table->timestamps();
+            $table->unique(['role_id', 'akuns_id'], 'cegah_duplikat_akses');
+        });
     }
 
     /**
@@ -26,5 +34,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users_akses_akun');
+        Schema::dropIfExists('roles_akses_akun');
     }
 };

@@ -35,13 +35,13 @@
                         <td class="py-3 px-5 font-semibold text-slate-800">{{ $user['name'] }}</td>
                         <td class="py-3 px-5 text-slate-500">{{ $user['email'] }}</td>
                         <td class="py-3 px-5">
-                            <span class="{{ $user['role_class'] }} text-xs font-bold px-2.5 py-1 rounded-lg">{{ $user['role'] }}</span>
+                            <span class="{{ $user['role_class'] }} text-xs font-bold px-2.5 py-1 rounded-lg">{{ $user->role['nama_role'] }}</span>
                         </td>
                         <td class="py-3 px-5 text-center">
-                            <button onclick="openModal('modal-user', {{ $user['id'] }})" title="Edit User" class="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors mx-0.5">
+                            <button onclick="openModal('modal-user', true, '{{ route('admin.users.update', $user->id) }}')" title="Edit User" class="...">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button onclick="confirmDelete('{{ $user['name'] }}')" title="Hapus User" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors mx-0.5">
+                            <button onclick="confirmDelete('{{ $user->name }}', '{{ route('admin.users.destroy', $user->id) }}')" title="Hapus User" class="...">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>

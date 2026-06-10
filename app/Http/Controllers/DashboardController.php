@@ -14,21 +14,21 @@ class DashboardController extends Controller
         $adjustmentsEnabled = $this->service->isAdjustmentsEnabled();
         $adj                = $this->service->getAdjustedBalances($transactions, $adjustmentsEnabled);
 
-        $kas          = $adj['111']['adjustedBalance'];
-        $piutang      = $adj['112']['adjustedBalance'];
-        $perlengkapan = $adj['113']['adjustedBalance'];
-        $sewa         = $adj['114']['adjustedBalance'];
-        $peralatan    = $adj['115']['adjustedBalance'];
-        $akumPeny     = $adj['116']['adjustedBalance'];
+        $kas          = $adj['111']['adjustedBalance'] ?? 0;
+        $piutang      = $adj['112']['adjustedBalance'] ?? 0;
+        $perlengkapan = $adj['113']['adjustedBalance'] ?? 0;
+        $sewa         = $adj['114']['adjustedBalance'] ?? 0;
+        $peralatan    = $adj['115']['adjustedBalance'] ?? 0;
+        $akumPeny     = $adj['116']['adjustedBalance'] ?? 0;
         $totalAssets  = $kas + $piutang + $perlengkapan + $sewa + $peralatan - $akumPeny;
 
-        $totalRev        = $adj['411']['adjustedBalance'] + $adj['412']['adjustedBalance'];
-        $expGaji         = $adj['511']['adjustedBalance'];
-        $expSewa         = $adj['512']['adjustedBalance'];
-        $expIklan        = $adj['513']['adjustedBalance'];
-        $expAsuransi     = $adj['514']['adjustedBalance'];
-        $expPerlengkapan = $adj['515']['adjustedBalance'];
-        $expPenyusutan   = $adj['516']['adjustedBalance'];
+        $totalRev = ($adj['411']['adjustedBalance'] ?? 0) + ($adj['412']['adjustedBalance'] ?? 0);
+        $expGaji         = $adj['511']['adjustedBalance'] ?? 0;
+        $expSewa         = $adj['512']['adjustedBalance'] ?? 0;
+        $expIklan        = $adj['513']['adjustedBalance'] ?? 0;
+        $expAsuransi     = $adj['514']['adjustedBalance'] ?? 0;
+        $expPerlengkapan = $adj['515']['adjustedBalance'] ?? 0;
+        $expPenyusutan   = $adj['516']['adjustedBalance'] ?? 0;
         $totalExp        = $expGaji + $expSewa + $expIklan + $expAsuransi + $expPerlengkapan + $expPenyusutan;
         $netIncome     = $totalRev - $totalExp;
         $peralatanNeto = $peralatan - $akumPeny;

@@ -14,6 +14,10 @@ use App\Http\Controllers\SaldoAwalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+    use App\Http\Controllers\admin\AdminUserController;
+use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\admin\AksesAkunController;
+
 // All accounting routes require authentication
 Route::middleware('auth')->group(function () {
     // Dashboard (halaman utama)
@@ -74,7 +78,17 @@ Route::middleware('auth')->group(function () {
 
 // User Management - Admin only
 Route::middleware(['auth', 'admin.only'])->group(function () {
-    Route::resource('users', UserController::class);
+    // Route::resource('users', UserController::class);
+
+    Route::prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+            Route::resource('users', AdminUserController::class);
+            Route::resource('roles', RoleController::class)->except(['show']);
+
+            // Rute untuk update pivot Role & Akun
+            Route::post('akses-akun/sync', [AksesAkunController::class, 'sync'])->name('akses-akun.sync');
+        });
 });
 
 require __DIR__.'/auth.php';

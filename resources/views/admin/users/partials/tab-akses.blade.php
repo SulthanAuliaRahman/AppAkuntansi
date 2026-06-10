@@ -22,7 +22,7 @@
                         <td class="py-4 px-5">
                             <p class="font-bold text-slate-800">{{ $user['name'] }}</p>
                             <span class="inline-flex items-center gap-1 mt-1 {{ $user['role_class'] }} text-[11px] font-bold px-2 py-0.5 rounded-md">
-                                <i class="fa-solid {{ $user['icon'] }} text-[9px]"></i> {{ $user['role'] }}
+                                <i class="fa-solid {{ $user['icon'] }} text-[9px]"></i> {{ $user->role['nama_role'] }}
                             </span>
                         </td>
                         <td class="py-4 px-5">
