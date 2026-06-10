@@ -7,6 +7,7 @@ use App\Models\EntriPenyesuaian;
 use App\Models\Jurnal;
 use App\Models\Pengaturan;
 use App\Models\SaldoAwal;
+use Illuminate\Support\Facades\DB;
 
 class AkuntansiService
 {
@@ -38,7 +39,7 @@ class AkuntansiService
 
     public function getTransactions(): array
     {
-       $driver = \DB::connection()->getDriverName();
+       $driver = DB::connection()->getDriverName();
 
         // 2. Siapkan query dasar pengambilan data Jurnal Umum beserta detailnya
         $query = Jurnal::with('details');
