@@ -13,15 +13,19 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaldoAwalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
-    use App\Http\Controllers\admin\AdminUserController;
+use App\Http\Controllers\admin\AdminUserController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\AksesAkunController;
+
+Route::get('/', function () {
+    return view('landingpage');
+});
+
 
 // All accounting routes require authentication
 Route::middleware('auth')->group(function () {
     // Dashboard (halaman utama)
-    Route::get('/', [DashboardController::class, 'index'])->name('akuntansi.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('akuntansi.dashboard');
 
     Route::resource('klasifikasi', KlasifikasiController::class)->names('akuntansi.klasifikasi');
 
@@ -66,9 +70,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // Auth routes (dari Laravel Breeze)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
