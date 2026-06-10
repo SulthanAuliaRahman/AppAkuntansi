@@ -59,18 +59,41 @@
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="py-4 px-5 font-semibold text-slate-600">{{ $t['date'] }}</td>
                             <td class="py-4 px-5">
-                                <div class="font-bold text-slate-800">{{ $accounts[$t['debitAcc']]['name'] ?? 'Akun tidak ditemukan' }}</div>
-                                <div class="pl-5 text-slate-500 italic mt-1 font-medium">{{ $accounts[$t['creditAcc']]['name'] ?? 'Akun tidak ditemukan' }}</div>
+                                @foreach ($t['entries'] as $entry)
+                                    <div class="{{ $entry['type'] === 'debet' ? 'font-bold text-slate-800' : 'pl-5 text-slate-500 italic font-medium' }} mb-1">
+                                        {{ $accounts[$entry['account']]['name'] ?? 'Akun tidak ditemukan' }}
+                                    </div>
+                                @endforeach
                                 <span class="text-xs text-indigo-600 block mt-1.5 font-medium">{{ $t['desc'] }}</span>
                             </td>
                             <td class="py-4 px-5">
-                                <div class="text-slate-600 font-bold">{{ $t['debitAcc'] }}</div>
-                                <div class="pl-5 text-slate-400 mt-1">{{ $t['creditAcc'] }}</div>
+                                @foreach ($t['entries'] as $entry)
+                                    <div class="{{ $entry['type'] === 'debet' ? 'text-slate-600 font-bold' : 'pl-5 text-slate-400' }} mb-1">
+                                        {{ $entry['account'] }}
+                                    </div>
+                                @endforeach
                             </td>
-                            <td class="py-4 px-5 text-right font-semibold text-slate-800">@rupiah($t['debitAmount'])</td>
                             <td class="py-4 px-5 text-right font-semibold text-slate-800">
-                                <div class="h-6"></div>
-                                <div>@rupiah($t['creditAmount'])</div>
+                                @foreach ($t['entries'] as $entry)
+                                    <div class="mb-1">
+                                        @if($entry['type'] === 'debet')
+                                            @rupiah($entry['amount'])
+                                        @else
+                                            <span class="invisible">0</span>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </td>
+                            <td class="py-4 px-5 text-right font-semibold text-slate-800">
+                                @foreach ($t['entries'] as $entry)
+                                    <div class="mb-1">
+                                        @if($entry['type'] === 'kredit')
+                                            @rupiah($entry['amount'])
+                                        @else
+                                            <span class="invisible">0</span>
+                                        @endif
+                                    </div>
+                                @endforeach
                             </td>
                             <td class="py-4 px-5 text-center">
                                 @if (!$t['is_static'])
@@ -110,6 +133,13 @@
         </div>
     </div>
 </main>
+
+{{-- Datalist untuk autocomplete pencarian akun --}}
+<datalist id="akun-list">
+    @foreach($akunsList as $akun)
+        <option value="{{ $akun['kode_akun'] }} - {{ $akun['nama_akun'] }}"></option>
+    @endforeach
+</datalist>
 
 {{-- ===== MODAL TAMBAH TRANSAKSI ===== --}}
 <div id="add-modal" style="display:none" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -270,14 +300,6 @@ function formatRupiah(value) {
     }).format(value);
 }
 
-function akunOptions(selectedKode = '') {
-    return akunsList.map(a =>
-        `<option value="${a.kode_akun}" ${a.kode_akun === selectedKode ? 'selected' : ''}>
-            ${a.kode_akun} – ${a.nama_akun}
-        </option>`
-    ).join('');
-}
-
 // ─── Entry row builder ────────────────────────────────────────────────────
 let _rowId = 0;
 function buildEntryRow(prefix, type = 'debet', akunKode = '', jumlah = '') {
@@ -286,6 +308,10 @@ function buildEntryRow(prefix, type = 'debet', akunKode = '', jumlah = '') {
     const row = document.createElement('div');
     row.className = 'grid grid-cols-12 gap-2 items-center entry-row';
 
+    // Cari nama akun jika akunKode sudah ada (untuk edit)
+    const akunNama = akunKode ? (akunsList.find(a => a.kode_akun == akunKode)?.nama_akun || '') : '';
+    const rawValue = akunKode ? `${akunKode} - ${akunNama}` : '';
+
     row.innerHTML = `
         <select name="${key}[type]"
             class="col-span-3 entry-type bg-white border border-slate-200 px-2 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400">
@@ -293,11 +319,12 @@ function buildEntryRow(prefix, type = 'debet', akunKode = '', jumlah = '') {
             <option value="kredit" ${type === 'kredit' ? 'selected' : ''}>Kredit</option>
         </select>
 
-        <select name="${key}[akun_kode]"
-            class="col-span-5 entry-akun bg-white border border-slate-200 px-2 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400">
-            <option value="">– Pilih Akun –</option>
-            ${akunOptions(akunKode)}
-        </select>
+        <div class="col-span-5 relative">
+            <input type="text" list="akun-list" value="${rawValue}"
+                placeholder="Cari kode atau nama..." autocomplete="off"
+                class="w-full entry-akun-raw bg-white border border-slate-200 px-2 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            <input type="hidden" name="${key}[akun_kode]" class="entry-akun" value="${akunKode}">
+        </div>
 
         <input  type="number" name="${key}[jumlah]"
             value="${jumlah}"
@@ -310,12 +337,23 @@ function buildEntryRow(prefix, type = 'debet', akunKode = '', jumlah = '') {
         </button>
     `;
 
+    // Handle extraction of kode_akun from raw input
+    const rawInput = row.querySelector('.entry-akun-raw');
+    const hiddenInput = row.querySelector('.entry-akun');
+
+    rawInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const code = val.split(' - ')[0].trim();
+        hiddenInput.value = code;
+        refreshTotals(prefix);
+    });
+
     row.querySelector('.remove-btn').addEventListener('click', () => {
         row.remove();
         refreshTotals(prefix);
     });
 
-    row.querySelectorAll('.entry-type, .entry-akun, .entry-amount').forEach(el => {
+    row.querySelectorAll('.entry-type, .entry-amount').forEach(el => {
         el.addEventListener('input',  () => refreshTotals(prefix));
         el.addEventListener('change', () => refreshTotals(prefix));
     });

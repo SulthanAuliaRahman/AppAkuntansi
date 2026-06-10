@@ -126,7 +126,7 @@ AppAkuntansi/
 │   │   │   ├── NeracaSaldoController.php     # Trial balance
 │   │   │   ├── PenyesuaianController.php     # AJE + toggle on/off
 │   │   │   ├── KertasKerjaController.php     # Neraca lajur 10 kolom
-│   │   │   ├── LaporanController.php         # Laporan keuangan formal
+│   │   │   ├── LaporanKeuanganController.php # Laporan keuangan setelah penyesuaian
 │   │   │   └── JurnalPenutupController.php   # Closing entries
 │   │   │
 │   │   └── Requests/
@@ -175,7 +175,7 @@ AppAkuntansi/
 │           ├── neraca-saldo.blade.php
 │           ├── penyesuaian.blade.php
 │           ├── kertas-kerja.blade.php
-│           ├── laporan.blade.php
+│           ├── laporan-keuangan.blade.php
 │           └── jurnal-penutup.blade.php
 │
 └── routes/

@@ -11,10 +11,6 @@ class NeracaSaldoController extends Controller
 
     public function index(Request $request)
     {
-
-        
-
-
         // 1. Ambil data dasar konfigurasi akun dan mutasi buku besar
         $accounts     = $this->service->getAccountsConfig();
         $transactions = $this->service->getTransactions();
@@ -30,6 +26,11 @@ class NeracaSaldoController extends Controller
 
             // Ambil saldo akhir persis seperti cara Buku Besar mengambilnya
             $finalBalance = empty($entries) ? 0 : end($entries)['balance'];
+
+            // ATURAN BISNIS BARU: Jika saldo akhirnya 0, skip/lewati akun ini (tidak dimasukkan ke tabel)
+            if ($finalBalance == 0) {
+                continue;
+            }
 
             $debit  = 0;
             $credit = 0;

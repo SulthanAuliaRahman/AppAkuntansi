@@ -12,7 +12,7 @@ class JurnalSeeder extends Seeder
     {
         $data = [
             [
-                'tanggal' => '01 Apr',
+                'tanggal' => '2008-04-01',
                 'keterangan' => 'Dibayar sewa 1 tahun di depan',
                 'details' => [
                     ['akun_kode' => '114', 'type' => 'debet', 'jumlah' => 1500000],
@@ -20,7 +20,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '02 Apr',
+                'tanggal' => '2008-04-02',
                 'keterangan' => 'Diterima pelunasan piutang pelanggan',
                 'details' => [
                     ['akun_kode' => '111', 'type' => 'debet', 'jumlah' => 8000000],
@@ -28,7 +28,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '03 Apr',
+                'tanggal' => '2008-04-03',
                 'keterangan' => 'Dibeli tunai perlengkapan kantor',
                 'details' => [
                     ['akun_kode' => '113', 'type' => 'debet', 'jumlah' => 2500000],
@@ -36,7 +36,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '10 Apr',
+                'tanggal' => '2008-04-10',
                 'keterangan' => 'Dikirim tagihan jasa ke customer (Kredit)',
                 'details' => [
                     ['akun_kode' => '112', 'type' => 'debet', 'jumlah' => 8000000],
@@ -44,7 +44,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '15 Apr',
+                'tanggal' => '2008-04-15',
                 'keterangan' => 'Dibayar hutang kepada kreditur',
                 'details' => [
                     ['akun_kode' => '211', 'type' => 'debet', 'jumlah' => 8500000],
@@ -52,7 +52,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '16 Apr',
+                'tanggal' => '2008-04-16',
                 'keterangan' => 'Dibeli tunai perlengkapan kantor tambahan',
                 'details' => [
                     ['akun_kode' => '113', 'type' => 'debet', 'jumlah' => 500000],
@@ -60,7 +60,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '25 Apr',
+                'tanggal' => '2008-04-25',
                 'keterangan' => 'Dibayar gaji karyawan bulanan',
                 'details' => [
                     ['akun_kode' => '511', 'type' => 'debet', 'jumlah' => 2000000],
@@ -68,7 +68,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '26 Apr',
+                'tanggal' => '2008-04-26',
                 'keterangan' => 'Dibayar beban iklan komersial',
                 'details' => [
                     ['akun_kode' => '513', 'type' => 'debet', 'jumlah' => 2500000],
@@ -76,7 +76,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '28 Apr',
+                'tanggal' => '2008-04-28',
                 'keterangan' => 'Diterima tunai pendapatan jasa service',
                 'details' => [
                     ['akun_kode' => '111', 'type' => 'debet', 'jumlah' => 9000000],
@@ -84,7 +84,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '29 Apr',
+                'tanggal' => '2008-04-29',
                 'keterangan' => 'Tuan Sakti mengambil prive pribadi',
                 'details' => [
                     ['akun_kode' => '312', 'type' => 'debet', 'jumlah' => 2000000],
@@ -92,7 +92,7 @@ class JurnalSeeder extends Seeder
                 ]
             ],
             [
-                'tanggal' => '30 Apr',
+                'tanggal' => '2008-04-30',
                 'keterangan' => 'Diterima uang iklan properti dimuka (3 bln)',
                 'details' => [
                     ['akun_kode' => '111', 'type' => 'debet', 'jumlah' => 1350000],

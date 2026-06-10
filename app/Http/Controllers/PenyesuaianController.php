@@ -18,33 +18,31 @@ class PenyesuaianController extends Controller
         $accounts = $this->service->getAccountsConfig();
         $akunsList = Akuns::where('aktif', true)->get(['id', 'kode_akun', 'nama_akun', 'jenis_akun_id'])->toArray();
 
-        // Ambil data AJP murni dari database kustom
+        // Ambil data AJP murni beserta detail baris dan master akunya sekaligus
         $ajps = Ajp::with('details.akun')->orderBy('tanggal', 'asc')->orderBy('id', 'asc')->get();
 
-        $ajeRows = $ajps->map(function ($ajp) {
-            $details = $ajp->details;
+        $ajeRows = [];
+        foreach ($ajps as $ajp) {
+            // Pisahkan pecahan baris debet dan kredit
+            $debits  = $ajp->details->where('posisi', 'DEBET');
+            $credits = $ajp->details->where('posisi', 'KREDIT');
 
-            $totalDebet  = (int) $details->where('posisi', 'DEBET')->sum('nominal');
-            $totalKredit = (int) $details->where('posisi', 'KREDIT')->sum('nominal');
+            // Hitung total akumulasi nominal per sisi
+            $totalDebit  = (int) $debits->sum('nominal');
+            $totalCredit = (int) $credits->sum('nominal');
 
-            $debitDetail  = $details->where('posisi', 'DEBET')->first();
-            $kreditDetail = $details->where('posisi', 'KREDIT')->first();
-
-            if (!$debitDetail || !$kreditDetail) {
-                return null;
-            }
-
-            return [
+            // Masukkan baris data utama dengan membawa seluruh array pecahan barisnya
+            $ajeRows[] = [
                 'id'           => $ajp->id,
                 'date'         => \Carbon\Carbon::parse($ajp->tanggal)->translatedFormat('d M'),
                 'desc'         => $ajp->keterangan,
-                'is_static'    => false, 
-                'debitAcc'     => $debitDetail->akun?->kode_akun ?? '',
-                'creditAcc'    => $kreditDetail->akun?->kode_akun ?? '',
-                'debitAmount'  => (int) $totalDebet,
-                'creditAmount' => (int) $totalKredit,
+                'is_static'    => false,
+                'debits'       => $debits,
+                'credits'      => $credits,
+                'debitAmount'  => $totalDebit,
+                'creditAmount' => $totalCredit,
             ];
-        })->filter()->values()->toArray();
+        }
 
         $totalDebitAJE  = array_sum(array_column($ajeRows, 'debitAmount'));
         $totalCreditAJE = array_sum(array_column($ajeRows, 'creditAmount'));
@@ -80,13 +78,14 @@ class PenyesuaianController extends Controller
                     'nominal' => $entry['nominal'],
                 ]);
             }
-    });
+        });
 
         return redirect()->route('akuntansi.penyesuaian')
             ->with('success', 'Ayat Jurnal Penyesuaian manual berhasil diposting!');
     }
 
-    public function details($id)
+    // Nama method disamakan menjadi getDetails agar sinkron dengan route web.php
+    public function getDetails($id)
     {
         $ajp = Ajp::with('details')->find($id);
         
@@ -136,10 +135,10 @@ class PenyesuaianController extends Controller
                     'nominal' => $entry['nominal'],
                 ]);
             }
-    });
+        });
 
         return redirect()->route('akuntansi.penyesuaian')
-            ->with('success', 'Transaksi penyesuaian berhasil diperbarui!');
+            ->with('with', 'Transaksi penyesuaian berhasil diperbarui!');
     }
 
     public function destroy($id)

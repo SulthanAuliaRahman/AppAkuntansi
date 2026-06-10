@@ -6,7 +6,6 @@ use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\JurnalPenutupController;
 use App\Http\Controllers\KertasKerjaController;
 use App\Http\Controllers\KlasifikasiController;
-use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\NeracaSaldoController;
 use App\Http\Controllers\PenyesuaianController;
@@ -55,8 +54,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/kertas-kerja',        [KertasKerjaController::class, 'index'])->name('akuntansi.kertaskerja');
 
     // Laporan Keuangan
-    Route::get('/laporan',             [LaporanController::class, 'index'])->name('akuntansi.laporan');
-    Route::get('/laporan/print',       [LaporanController::class, 'print'])->name('akuntansi.laporan.print');
     Route::get('/laporan-keuangan',    [LaporanKeuanganController::class, 'index'])->name('akuntansi.laporan.keuangan');
 
     // Jurnal Penutup
