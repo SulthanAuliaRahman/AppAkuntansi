@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('jurnal', function (Blueprint $table) {
             $table->id();
-            $table->string('tanggal', 10);
+            $table->date('tanggal');
             $table->string('keterangan', 255);
             $table->string('akun_debet', 10);
             $table->string('akun_kredit', 10);

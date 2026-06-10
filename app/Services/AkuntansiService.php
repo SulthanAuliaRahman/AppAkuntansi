@@ -82,7 +82,7 @@ class AkuntansiService
                 'debitAmount'  => $totalDebet,
                 'creditAmount' => $totalKredit,
                 // Semua detail entries untuk keperluan ledger / buku besar
-                'entries'      => $details->map(fn($d) => [
+                'entries'      => $details->sortBy(fn($d) => $d->type === 'debet' ? 0 : 1)->map(fn($d) => [
                     'account' => $d->akun_kode,
                     'type'    => $d->type,
                     'amount'  => (int) $d->jumlah,
@@ -94,7 +94,7 @@ class AkuntansiService
     private function formatTanggal($tanggal): string
     {
         try {
-            return \Carbon\Carbon::parse($tanggal)->translatedFormat('d M');
+            return \Carbon\Carbon::parse($tanggal)->translatedFormat('j F Y');
         } catch (\Exception $e) {
             return (string) $tanggal;
         }
