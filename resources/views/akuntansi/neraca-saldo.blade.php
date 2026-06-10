@@ -75,27 +75,27 @@
                         </tr>
                     </thead>
                     <tbody class="text-sm divide-y divide-slate-100">
-                        @forelse ($rows as $row)
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="py-3.5 px-5 font-semibold text-slate-500">{{ $row['code'] }}</td>
-                            <td class="py-3.5 px-5 font-bold text-slate-800">{{ $row['config']['name'] }}</td>
-                            
-                            <td class="py-3.5 px-5 text-right font-semibold text-slate-700">
-                                {{ $row['debit'] > 0 ? 'Rp ' . number_format($row['debit'], 0, ',', '.') : '-' }}
-                            </td>
-                            
-                            <td class="py-3.5 px-5 text-right font-semibold text-slate-700">
-                                {{ $row['credit'] > 0 ? 'Rp ' . number_format($row['credit'], 0, ',', '.') : '-' }}
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" class="py-8 px-5 text-center text-slate-500">
-                                📋 Belum ada data akun atau saldo Buku Besar yang dapat dimuat.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
+    @forelse ($rows as $row)
+    <tr class="hover:bg-slate-50/50 transition-colors">
+        <td class="py-3.5 px-5 font-semibold text-slate-500">{{ $row['code'] }}</td>
+        <td class="py-3.5 px-5 font-bold text-slate-800">{{ $row['config']['name'] }}</td>
+        
+        <td class="py-3.5 px-5 text-right font-semibold text-slate-700">
+            {{ (!empty($row['debit']) && $row['debit'] != 0) ? 'Rp ' . number_format((float)$row['debit'], 0, ',', '.') : '-' }}
+        </td>
+        
+        <td class="py-3.5 px-5 text-right font-semibold text-slate-700">
+            {{ (!empty($row['credit']) && $row['credit'] != 0) ? 'Rp ' . number_format((float)$row['credit'], 0, ',', '.') : '-' }}
+        </td>
+    </tr>
+    @empty
+    <tr>
+        <td colspan="4" class="py-8 px-5 text-center text-slate-500">
+            📋 Belum ada data akun atau saldo Buku Besar yang dapat dimuat.
+        </td>
+    </tr>
+    @endforelse
+</tbody>
                     <tfoot>
                         <tr class="bg-slate-50 font-bold border-t-2 border-slate-200 text-slate-800">
                             <td colspan="2" class="py-4 px-5 text-right uppercase tracking-wider">Total Akhir Neraca Saldo</td>

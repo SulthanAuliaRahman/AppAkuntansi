@@ -184,6 +184,13 @@
     </div>
 </main>
 
+{{-- Datalist untuk autocomplete pencarian akun --}}
+<datalist id="akun-list">
+    @foreach($akunsList as $akun)
+        <option value="{{ $akun['kode_akun'] }} - {{ $akun['nama_akun'] }}"></option>
+    @endforeach
+</datalist>
+
 {{-- ===== MODAL TAMBAH AJP MANUAl ===== --}}
 <div id="add-modal" style="display:none" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300 scale-95 opacity-0 max-h-[90vh] flex flex-col" id="add-modal-container">
@@ -360,20 +367,16 @@ function formatRupiah(value) {
     }).format(value);
 }
 
-function akunOptions(selectedId = '') {
-    return akunsList.map(a =>
-        `<option value="${a.id}" ${a.id == selectedId ? 'selected' : ''}>
-            ${a.kode_akun} – ${a.nama_akun}
-        </option>`
-    ).join('');
-}
-
 let _rowId = 0;
 function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '', isPrimary = false) {
     const id  = ++_rowId;
     const key = `entries[${id}]`;
     const row = document.createElement('div');
     row.className = 'grid grid-cols-12 gap-2 items-center entry-row';
+
+    // Cari akun dari ID yang diberikan (untuk edit)
+    const akunObj = akunId ? (akunsList.find(a => a.id == akunId) || null) : null;
+    const rawValue = akunObj ? `${akunObj.kode_akun} - ${akunObj.nama_akun}` : '';
 
     // Jika akun utama, sembunyikan tombol sampah pembasmi baris
     const deleteButtonHTML = isPrimary 
@@ -390,11 +393,12 @@ function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '', isPr
             <option value="KREDIT" ${posisi === 'KREDIT' ? 'selected' : ''}>Kredit</option>
         </select>
 
-        <select name="${key}[akun_id]"
-            class="col-span-5 entry-akun bg-white border border-slate-200 px-2 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
-            <option value="">– Pilih Akun –</option>
-            ${akunOptions(akunId)}
-        </select>
+        <div class="col-span-5 relative">
+            <input type="text" list="akun-list" value="${rawValue}"
+                placeholder="Cari kode atau nama..." autocomplete="off"
+                class="w-full entry-akun-raw bg-white border border-slate-200 px-2 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+            <input type="hidden" name="${key}[akun_id]" class="entry-akun" value="${akunId}">
+        </div>
 
         <input type="number" name="${key}[nominal]"
             value="${nominal}"
@@ -404,6 +408,17 @@ function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '', isPr
         ${deleteButtonHTML}
     `;
 
+    const rawInput = row.querySelector('.entry-akun-raw');
+    const hiddenInput = row.querySelector('.entry-akun');
+
+    rawInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const code = val.split(' - ')[0].trim();
+        const akun = akunsList.find(a => a.kode_akun == code);
+        hiddenInput.value = akun ? akun.id : '';
+        refreshTotals(prefix);
+    });
+
     if (!isPrimary) {
         row.querySelector('.remove-btn').addEventListener('click', () => {
             row.remove();
@@ -411,7 +426,7 @@ function buildEntryRow(prefix, posisi = 'DEBET', akunId = '', nominal = '', isPr
         });
     }
 
-    row.querySelectorAll('.entry-type, .entry-akun, .entry-amount').forEach(el => {
+    row.querySelectorAll('.entry-type, .entry-amount').forEach(el => {
         el.addEventListener('input',  () => refreshTotals(prefix));
         el.addEventListener('change', () => refreshTotals(prefix));
     });
