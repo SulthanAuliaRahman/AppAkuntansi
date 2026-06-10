@@ -44,18 +44,29 @@ class StoreJurnalRequest extends FormRequest
 
     /**
      * Validasi tambahan setelah rules standar lulus:
-     * total debet HARUS sama dengan total kredit.
+     * total debet HARUS sama dengan total kredit & cek akses akun.
      */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
             $entries = $this->input('entries', []);
+            $user = auth()->user();
 
             $totalDebet  = 0;
             $totalKredit = 0;
 
-            foreach ($entries as $entry) {
+            foreach ($entries as $index => $entry) {
                 $jumlah = (int) ($entry['jumlah'] ?? 0);
+                $akunKode = $entry['akun_kode'] ?? null;
+
+                // Cek akses user untuk akun ini
+                if ($akunKode && !$user->canAccessAkun($akunKode)) {
+                    $validator->errors()->add(
+                        "entries.$index.akun_kode",
+                        "Anda tidak memiliki akses untuk menggunakan akun $akunKode."
+                    );
+                }
+
                 if (($entry['type'] ?? '') === 'debet') {
                     $totalDebet += $jumlah;
                 } else {

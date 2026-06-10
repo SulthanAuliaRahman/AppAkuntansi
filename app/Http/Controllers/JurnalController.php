@@ -18,7 +18,10 @@ class JurnalController extends Controller
     {
         $transactions = $this->service->getTransactions();
         $accounts     = $this->service->getAccountsConfig();
-        $akunsList    = Akuns::where('aktif', true)->get(['kode_akun', 'nama_akun', 'jenis_akun_id'])->toArray();
+
+        // Filter akun berdasarkan akses user
+        $user = auth()->user();
+        $akunsList = $user->getAccessibleAkuns()->toArray();
 
         // Hitung total debet dan kredit secara terpisah dari masing-masing sisi
         $totalDebit  = array_sum(array_column($transactions, 'debitAmount'));
