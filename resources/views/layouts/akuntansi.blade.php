@@ -19,7 +19,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- Top Header -->
     <header class="bg-gradient-to-r from-indigo-700 via-blue-700 to-indigo-800 text-white shadow-xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -40,13 +39,22 @@
                     <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
                     Status Buku Seimbang (Balanced)
                 </div>
+
+                {{-- Muncul kalau role yang dimiliki logged in use di flag full acces --}}
+                @if(auth()->check() && auth()->user()->role && auth()->user()->role->is_full_access)
+                    <div class="pl-3 ml-3 border-l border-indigo-400/30">
+                        <a href="{{ route('admin.users.index') }}" class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 shadow-sm backdrop-blur-sm">
+                            <i class="fa-solid fa-user-shield text-amber-300"></i>
+                            <span class="hidden sm:inline">Admin Panel</span>
+                        </a>
+                    </div>
+                @endif
             </div>
         </div>
     </header>
 
     @yield('content')
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-100 py-6 mt-12">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 space-y-2">
             <p class="font-bold text-slate-500">Kelompok 2 - Perusahaan Jasa "Anugerah Sakti" © 2026</p>
@@ -54,7 +62,6 @@
         </div>
     </footer>
 
-    <!-- Toast Flash Message -->
     @if (session('success'))
     <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 transition-all duration-300">
         <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>

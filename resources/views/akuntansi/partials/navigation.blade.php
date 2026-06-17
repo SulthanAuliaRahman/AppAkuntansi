@@ -2,14 +2,14 @@
 $tabs = [
     ['label' => 'Dashboard',            'route' => 'dashboard',    'icon' => 'fa-gauge-high'],
     ['label' => 'Klasifikasi Akun',     'route' => 'akuntansi.klasifikasi.index', 'icon' => 'fa-file-invoice-dollar'],
-    ['label' => '0. Saldo Awal',        'route' => 'akuntansi.saldoawal',    'icon' => 'fa-coin'],
-    ['label' => '1. Jurnal Umum',       'route' => 'akuntansi.jurnal',       'icon' => 'fa-book-open'],
-    ['label' => '2. Buku Besar',        'route' => 'akuntansi.bukubesar',    'icon' => 'fa-folder-closed'],
-    ['label' => '3. Neraca Saldo',      'route' => 'akuntansi.neracasaldo',  'icon' => 'fa-scale-balanced'],
-    ['label' => '4. Penyesuaian',       'route' => 'akuntansi.penyesuaian',  'icon' => 'fa-sliders'],
-    ['label' => '5. Kertas Kerja',      'route' => 'akuntansi.kertaskerja',  'icon' => 'fa-table-cells'],
-    ['label' => '6. Laporan Keuangan', 'route' => 'akuntansi.laporan.keuangan', 'icon' => 'fa-file-invoice-dollar'],
-    ['label' => '7. Jurnal Penutup',    'route' => 'akuntansi.penutup',      'icon' => 'fa-box-archive'],
+    ['label' => 'Saldo Awal',        'route' => 'akuntansi.saldoawal',    'icon' => 'fa-solid fa-coins'],
+    ['label' => 'Jurnal Umum',       'route' => 'akuntansi.jurnal',       'icon' => 'fa-book-open'],
+    ['label' => 'Buku Besar',        'route' => 'akuntansi.bukubesar',    'icon' => 'fa-folder-closed'],
+    ['label' => 'Neraca Saldo',      'route' => 'akuntansi.neracasaldo',  'icon' => 'fa-scale-balanced'],
+    ['label' => 'Penyesuaian',       'route' => 'akuntansi.penyesuaian',  'icon' => 'fa-sliders'],
+    ['label' => 'Kertas Kerja',      'route' => 'akuntansi.kertaskerja',  'icon' => 'fa-table-cells'],
+    ['label' => 'Laporan Keuangan', 'route' => 'akuntansi.laporan.keuangan', 'icon' => 'fa-file-invoice-dollar'],
+    ['label' => 'Jurnal Penutup',    'route' => 'akuntansi.penutup',      'icon' => 'fa-box-archive'],
 ];
 @endphp
 

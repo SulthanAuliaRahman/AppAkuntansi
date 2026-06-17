@@ -39,7 +39,7 @@
                     <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Manajemen Hak Akses</h1>
                 </div>
             </div>
-            <a href="#" class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2">
+            <a href="{{ route('dashboard') }}" class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
             </a>
         </div>
