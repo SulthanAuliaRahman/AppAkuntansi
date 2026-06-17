@@ -49,6 +49,19 @@
                         </a>
                     </div>
                 @endif
+
+                {{-- Tombol Logout --}}
+                @if(auth()->check())
+                    <div class="pl-3 ml-1 border-l border-indigo-400/30">
+                        <form method="POST" action="{{ route('logout') }}" class="m-0 p-0 inline">
+                            @csrf
+                            <button type="submit" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-100 border border-rose-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 shadow-sm backdrop-blur-sm">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span class="hidden sm:inline">Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                @endif
             </div>
         </div>
     </header>
