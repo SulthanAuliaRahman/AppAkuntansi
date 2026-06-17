@@ -77,7 +77,8 @@ Route::middleware(['auth', 'admin.only'])->group(function () {
         Route::resource('users', AdminUserController::class);
         Route::resource('roles', RoleController::class)->except(['show']);
 
-        // Pivot Role & Akun
+        // Halaman dan Proses Akses Akun
+        Route::get('akses-akun', [AksesAkunController::class, 'index'])->name('akses-akun.index');
         Route::post('akses-akun/sync', [AksesAkunController::class, 'sync'])->name('akses-akun.sync');
     });
 });

@@ -13,21 +13,20 @@ class AksesAkunController extends Controller
     {
         $request->validate([
             'role_id' => 'required|exists:roles,id',
-            'akun_id' => 'nullable|array', // Bisa null jika mengosongkan semua akses
+            'akun_id' => 'nullable|array',
         ]);
 
         $role = Role::findOrFail($request->role_id);
 
-        // Jika form mengirimkan 'kode_akun' dari checkbox (sesuai UI yang kamu buat),
-        // kita perlu mencari ID akuns-nya terlebih dahulu.
         $akunIds = [];
         if ($request->has('akun_id')) {
             $akunIds = Akuns::whereIn('kode_akun', $request->akun_id)->pluck('id')->toArray();
         }
 
-        // Fungsi sync() otomatis menghapus akses lama dan memasukkan akses baru ke tabel pivot
         $role->akunAkses()->sync($akunIds);
 
-        return redirect()->route('admin.users.index')->with('success', 'Pemetaan akses akun berhasil diperbarui.');
+        $tab = $request->input('redirect_tab', 'akses');
+
+        return redirect()->route('admin.users.index', ['tab' => $tab])->with('success', 'Pemetaan akses akun berhasil diperbarui.');
     }
 }

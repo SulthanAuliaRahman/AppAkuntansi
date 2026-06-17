@@ -1,8 +1,14 @@
-<section id="tab-akses" class="tab-content space-y-4">
+{{-- resources/views/admin/users/partials/tab-akses.blade.php --}}
+@php $activeTab = request('tab', 'users'); @endphp
+
+<section id="tab-akses" class="tab-content {{ $activeTab === 'akses' ? 'active' : '' }} space-y-4">
     <div class="flex justify-between items-center">
-        <h2 class="text-lg font-bold text-slate-800">Pemetaan Akses Akun per User</h2>
-        <button onclick="openModal('modal-akses')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md flex items-center gap-2">
-            <i class="fa-solid fa-link"></i> <span class="hidden sm:inline">Atur</span> Koneksi
+        <h2 class="text-lg font-bold text-slate-800">Pemetaan Akses Akun per Role</h2>
+        <button onclick="openModal('modal-akses')"
+            class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm
+                   font-semibold shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-link"></i>
+            <span class="hidden sm:inline">Atur</span> Koneksi
         </button>
     </div>
 
@@ -17,42 +23,54 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-slate-100">
-                    @foreach($users as $user)
+                    @forelse($users as $user)
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-4 px-5">
-                            <p class="font-bold text-slate-800">{{ $user['name'] }}</p>
-                            <span class="inline-flex items-center gap-1 mt-1 {{ $user['role_class'] }} text-[11px] font-bold px-2 py-0.5 rounded-md">
-                                <i class="fa-solid {{ $user['icon'] }} text-[9px]"></i> {{ $user->role['nama_role'] }}
+                            <p class="font-bold text-slate-800">{{ $user->name }}</p>
+                            <span class="inline-flex items-center gap-1 mt-1 {{ $user->role_class ?? 'bg-slate-100 text-slate-600' }} text-[11px] font-bold px-2 py-0.5 rounded-md">
+                                {{ $user->role->nama_role ?? '—' }}
                             </span>
                         </td>
                         <td class="py-4 px-5">
-                            @if($user['role'] === 'SUPERVISOR')
+                            @if($user->role?->is_full_access)
                                 <span class="inline-flex items-center gap-1.5 bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm">
                                     <i class="fa-solid fa-asterisk text-[9px]"></i> Semua Akun (Bypass)
                                 </span>
                             @else
+                                @php $akunList = $user->role?->aksesAkun ?? collect(); @endphp
                                 <div class="flex flex-wrap gap-2">
-                                    @if($user['role'] === 'STAFF_AP')
-                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">111 — Kas</span>
-                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">211 — Utang Usaha</span>
-                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">212 — Utang Gaji</span>
-                                        <span class="text-slate-400 text-xs font-medium self-center">3 akun</span>
-                                    @else
-                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">111 — Kas</span>
-                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">112 — Piutang Usaha</span>
-                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">411 — Pendapatan Jasa</span>
-                                        <span class="text-slate-400 text-xs font-medium self-center">3 akun</span>
+                                    @forelse($akunList as $akun)
+                                        <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">
+                                            {{ $akun->kode_akun }} — {{ $akun->nama_akun }}
+                                        </span>
+                                    @empty
+                                        <span class="text-slate-400 text-xs italic">Belum ada akses dikonfigurasi</span>
+                                    @endforelse
+                                    @if($akunList->count() > 0)
+                                        <span class="text-slate-400 text-xs font-medium self-center">
+                                            {{ $akunList->count() }} akun
+                                        </span>
                                     @endif
                                 </div>
                             @endif
                         </td>
                         <td class="py-4 px-5 text-center">
-                            <button onclick="openModal('modal-akses', {{ $user['id'] }})" class="bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 hover:border-indigo-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                            <button onclick="openModal('modal-akses')"
+                                class="bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600
+                                       border border-slate-200 hover:border-indigo-200 px-3 py-1.5 rounded-lg
+                                       text-xs font-bold transition-colors">
                                 Edit Akses
                             </button>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="3" class="py-12 text-center">
+                            <i class="fa-solid fa-key text-3xl text-slate-300 mb-2 block"></i>
+                            <p class="text-sm text-slate-400">Tidak ada data akses.</p>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

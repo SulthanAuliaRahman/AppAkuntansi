@@ -47,7 +47,11 @@ class AdminUserController extends Controller
 
         User::create($validated); // Password otomatis ter-hash karena ada casting di Model User
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
+        $tab = $request->input('redirect_tab', 'users');
+
+        return redirect()
+            ->route('admin.users.index', ['tab' => $tab])
+            ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
     public function update(Request $request, User $user)
@@ -65,12 +69,21 @@ class AdminUserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui.');
+        $tab = $request->input('redirect_tab', 'users');
+
+        return redirect()
+            ->route('admin.users.index', ['tab' => $tab])
+            ->with('success', 'User berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user,Request $request,)
     {
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
+
+        $tab = $request->input('redirect_tab', 'users');
+
+        return redirect()
+            ->route('admin.users.index', ['tab' => $tab])
+            ->with('success', 'Pengguna berhasil dihapus.');
     }
 }

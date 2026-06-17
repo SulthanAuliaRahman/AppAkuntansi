@@ -20,7 +20,9 @@ class RoleController extends Controller
 
         Role::create($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Role berhasil dibuat.');
+        $tab = $request->input('redirect_tab', 'roles');
+
+        return redirect()->route('admin.users.index', ['tab' => $tab])->with('success', 'Role berhasil dibuat.');
     }
 
     public function update(Request $request, Role $role)
@@ -35,12 +37,17 @@ class RoleController extends Controller
 
         $role->update($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Role berhasil diperbarui.');
+        $tab = $request->input('redirect_tab', 'roles');
+
+        return redirect()->route('admin.users.index', ['tab' => $tab])->with('success', 'Role berhasil diperbarui.');
     }
 
-    public function destroy(Role $role)
+    public function destroy(Role $role, Request $request)
     {
         $role->delete();
-        return redirect()->route('admin.users.index')->with('success', 'Role berhasil dihapus.');
+
+        $tab = $request->input('redirect_tab', 'roles');
+
+        return redirect()->route('admin.users.index', ['tab' => $tab])->with('success', 'Role berhasil dihapus.');
     }
 }

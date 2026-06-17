@@ -1,4 +1,7 @@
-<section id="tab-users" class="tab-content active space-y-4">
+{{-- resources/views/admin/users/partials/tab-users.blade.php --}}
+@php $activeTab = request('tab', 'users'); @endphp
+
+<section id="tab-users" class="tab-content {{ $activeTab === 'users' ? 'active' : '' }} space-y-4">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 class="text-lg font-bold text-slate-800">Daftar Pengguna</h2>
         <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -7,11 +10,16 @@
                     <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
                 </div>
                 <input type="text" id="search-users" oninput="filterTable('tbl-users', this.value)"
-                    class="w-full sm:w-52 rounded-xl border border-slate-300 pl-9 pr-4 py-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all placeholder:text-slate-400"
+                    class="w-full sm:w-52 rounded-xl border border-slate-300 pl-9 pr-4 py-2 text-sm
+                           focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none
+                           transition-all placeholder:text-slate-400"
                     placeholder="Cari nama atau email...">
             </div>
-            <button onclick="openModal('modal-user')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md flex items-center gap-2 shrink-0">
-                <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Tambah</span> User
+            <button onclick="resetModalUser()"
+                class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm
+                       font-semibold shadow-md flex items-center gap-2 shrink-0">
+                <i class="fa-solid fa-plus"></i>
+                <span class="hidden sm:inline">Tambah</span> User
             </button>
         </div>
     </div>
@@ -29,24 +37,39 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-slate-100">
-                    @foreach($users as $user)
+                    @forelse($users as $user)
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="py-3 px-5 font-medium text-slate-400">{{ $user['id'] }}</td>
-                        <td class="py-3 px-5 font-semibold text-slate-800">{{ $user['name'] }}</td>
-                        <td class="py-3 px-5 text-slate-500">{{ $user['email'] }}</td>
+                        <td class="py-3 px-5 font-medium text-slate-400">{{ $user->id }}</td>
+                        <td class="py-3 px-5 font-semibold text-slate-800">{{ $user->name }}</td>
+                        <td class="py-3 px-5 text-slate-500">{{ $user->email }}</td>
                         <td class="py-3 px-5">
-                            <span class="{{ $user['role_class'] }} text-xs font-bold px-2.5 py-1 rounded-lg">{{ $user->role['nama_role'] }}</span>
+                            <span class="{{ $user->role_class ?? 'bg-slate-100 text-slate-600' }} text-xs font-bold px-2.5 py-1 rounded-lg">
+                                {{ $user->role->nama_role ?? '—' }}
+                            </span>
                         </td>
                         <td class="py-3 px-5 text-center">
-                            <button onclick="openModal('modal-user', true, '{{ route('admin.users.update', $user->id) }}')" title="Edit User" class="...">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="confirmDelete('{{ $user->name }}', '{{ route('admin.users.destroy', $user->id) }}')" title="Hapus User" class="...">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                            <div class="flex items-center justify-center gap-1">
+                                <button onclick="openModalEditUser({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ $user->email }}', {{ $user->role_id ?? 'null' }}, '{{ route('admin.users.update', $user->id) }}')"
+                                    title="Edit User"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 transition-colors">
+                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                </button>
+                                <button onclick="confirmDelete('{{ addslashes($user->name) }}', '{{ route('admin.users.destroy', $user->id) }}', 'users')"
+                                    title="Hapus User"
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-12 text-center">
+                            <i class="fa-solid fa-users-slash text-3xl text-slate-300 mb-2 block"></i>
+                            <p class="text-sm text-slate-400">Belum ada pengguna terdaftar.</p>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
