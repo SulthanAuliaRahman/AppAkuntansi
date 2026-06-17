@@ -37,20 +37,45 @@
                             <td class="py-2.5 px-4 text-slate-500 font-semibold">{{ $row['code'] }}</td>
                             <td class="py-2.5 px-4 font-bold text-slate-800 truncate">{{ $row['config']['name'] }}</td>
                             
-                            <td class="py-2 px-2 text-right border-l border-slate-100">{{ $row['tbD'] > 0 ? 'Rp '.number_format($row['tbD'],0,',','.') : '-' }}</td>
-                            <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['tbK'] > 0 ? 'Rp '.number_format($row['tbK'],0,',','.') : '-' }}</td>
+                            {{-- 1. Kolom Neraca Saldo Awal (Sudah di-fix agar bisa membaca angka minus) --}}
+                            <td class="py-2 px-2 text-right border-l border-slate-100">
+                                {{ (!empty($row['tbD']) && $row['tbD'] != 0) ? 'Rp '.number_format((float)$row['tbD'],0,',','.') : '-' }}
+                            </td>
+                            <td class="py-2 px-2 text-right border-r border-slate-100">
+                                {{ (!empty($row['tbK']) && $row['tbK'] != 0) ? 'Rp '.number_format((float)$row['tbK'],0,',','.') : '-' }}
+                            </td>
                             
-                            <td class="py-2 px-2 text-right">{{ $row['ajeD'] > 0 ? 'Rp '.number_format($row['ajeD'],0,',','.') : '-' }}</td>
-                            <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['ajeK'] > 0 ? 'Rp '.number_format($row['ajeK'],0,',','.') : '-' }}</td>
+                            {{-- 2. Kolom Jurnal Penyesuaian (AJP) --}}
+                            <td class="py-2 px-2 text-right">
+                                {{ (!empty($row['ajeD']) && $row['ajeD'] != 0) ? 'Rp '.number_format((float)$row['ajeD'],0,',','.') : '-' }}
+                            </td>
+                            <td class="py-2 px-2 text-right border-r border-slate-100">
+                                {{ (!empty($row['ajeK']) && $row['ajeK'] != 0) ? 'Rp '.number_format((float)$row['ajeK'],0,',','.') : '-' }}
+                            </td>
                             
-                            <td class="py-2 px-2 text-right">{{ $row['nsdD'] > 0 ? 'Rp '.number_format($row['nsdD'],0,',','.') : '-' }}</td>
-                            <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['nsdK'] > 0 ? 'Rp '.number_format($row['nsdK'],0,',','.') : '-' }}</td>
+                            {{-- 3. Kolom Neraca Saldo Setelah Penyesuaian (NSD) --}}
+                            <td class="py-2 px-2 text-right">
+                                {{ (!empty($row['nsdD']) && $row['nsdD'] != 0) ? 'Rp '.number_format((float)$row['nsdD'],0,',','.') : '-' }}
+                            </td>
+                            <td class="py-2 px-2 text-right border-r border-slate-100">
+                                {{ (!empty($row['nsdK']) && $row['nsdK'] != 0) ? 'Rp '.number_format((float)$row['nsdK'],0,',','.') : '-' }}
+                            </td>
                             
-                            <td class="py-2 px-2 text-right">{{ $row['lrD'] > 0 ? 'Rp '.number_format($row['lrD'],0,',','.') : '-' }}</td>
-                            <td class="py-2 px-2 text-right border-r border-slate-100">{{ $row['lrK'] > 0 ? 'Rp '.number_format($row['lrK'],0,',','.') : '-' }}</td>
+                            {{-- 4. Kolom Laba Rugi --}}
+                            <td class="py-2 px-2 text-right">
+                                {{ (!empty($row['lrD']) && $row['lrD'] != 0) ? 'Rp '.number_format((float)$row['lrD'],0,',','.') : '-' }}
+                            </td>
+                            <td class="py-2 px-2 text-right border-r border-slate-100">
+                                {{ (!empty($row['lrK']) && $row['lrK'] != 0) ? 'Rp '.number_format((float)$row['lrK'],0,',','.') : '-' }}
+                            </td>
                             
-                            <td class="py-2 px-2 text-right">{{ $row['nD'] > 0 ? 'Rp '.number_format($row['nD'],0,',','.') : '-' }}</td>
-                            <td class="py-2 px-2 text-right">{{ $row['nK'] > 0 ? 'Rp '.number_format($row['nK'],0,',','.') : '-' }}</td>
+                            {{-- 5. Kolom Neraca Akhir --}}
+                            <td class="py-2 px-2 text-right">
+                                {{ (!empty($row['nD']) && $row['nD'] != 0) ? 'Rp '.number_format((float)$row['nD'],0,',','.') : '-' }}
+                            </td>
+                            <td class="py-2 px-2 text-right">
+                                {{ (!empty($row['nK']) && $row['nK'] != 0) ? 'Rp '.number_format((float)$row['nK'],0,',','.') : '-' }}
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
