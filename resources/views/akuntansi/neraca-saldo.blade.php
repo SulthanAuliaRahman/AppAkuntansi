@@ -1,64 +1,27 @@
 @extends('layouts.akuntansi')
 
 @section('content')
-<style media="print">
-    /* 1. Mempertahankan warna latar belakang dan layout asli template */
-    body {
-        background-color: #f8fafc !important; /* Warna slate-50 bawaan dashboard */
-        color: #1e293b !important; /* Warna slate-800 */
-    }
-    
-    /* 2. Sembunyikan tombol print dan navigasi menu agar tidak mengotori kertas */
-    .no-print, 
-    button, 
-    nav, 
-    header,
-    .sidebar {
-        display: none !important;
-    }
-
-    /* 3. Memaksa browser/printer mempertahankan warna (indigo, abu-abu tabel, dll) */
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    /* 4. Menjaga ukuran layout agar tetap proporsional seperti di layar monitor */
-    main {
-        max-width: 100% !important;
-        padding: 24px !important;
-        margin: 0 auto !important;
-    }
-
-    .rounded-2xl {
-        border-radius: 1rem !important;
-    }
-
-    .shadow-sm {
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-    }
-</style>
-
 <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div class="no-print">
+    <div>
         @include('akuntansi.partials.navigation')
     </div>
 
     <div class="space-y-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative">
-            
-            <div class="text-center space-y-1">
-                <h1 class="text-lg font-bold text-slate-600 uppercase tracking-wide">Perusahaan Jasa Cleaning Service</h1> 
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Neraca Saldo</h2> 
-            </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
 
-            <div class="absolute top-6 right-6 no-print">
-                <button onclick="window.print()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path>
-                    </svg>
-                    Print Neraca
-                </button>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="text-center sm:text-left flex-1">
+                    <h1 class="text-lg font-bold text-slate-600 uppercase tracking-wide">Perusahaan Jasa Anugerah Sakti</h1>
+                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Neraca Saldo</h2>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ route('akuntansi.neracasaldo.excel') }}"
+                       class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Export Excel</span>
+                    </a>
+                </div>
             </div>
         </div>
 
