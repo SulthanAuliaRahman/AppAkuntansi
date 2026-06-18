@@ -9,25 +9,56 @@ use App\Models\Akuns;
 use App\Models\Pengaturan;
 use App\Services\AkuntansiService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class JurnalController extends Controller
 {
     public function __construct(private AkuntansiService $service) {}
 
-    public function index()
+    public function index(Request $request)
     {
+        $startDate = $request->input('start_date');
+        $endDate   = $request->input('end_date');
+
         $transactions = $this->service->getTransactions();
         $accounts     = $this->service->getAccountsConfig();
+
+        // Filter berdasarkan tanggal
+        if ($startDate || $endDate) {
+            $transactions = array_filter($transactions, function ($t) use ($startDate, $endDate) {
+                if (!isset($t['rawDate'])) return true;
+                $tDate = \Carbon\Carbon::parse($t['rawDate'])->format('Y-m-d');
+                
+                if ($startDate && $tDate < $startDate) return false;
+                if ($endDate && $tDate > $endDate) return false;
+                return true;
+            });
+            $transactions = array_values($transactions);
+        }
 
         // Filter akun berdasarkan akses user
         $user = auth()->user();
         $akunsList = $user->getAccessibleAkuns()->toArray();
+        $accessibleAkunCodes = array_column($akunsList, 'kode_akun');
+
+        // Filter transaksi berdasarkan akun yang bisa diakses (hanya tampilkan jika ada akun yang bisa diakses)
+        if (!$user->role->is_full_access) {
+            $transactions = array_filter($transactions, function ($t) use ($accessibleAkunCodes) {
+                foreach ($t['entries'] as $entry) {
+                    if (in_array($entry['account'], $accessibleAkunCodes)) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            $transactions = array_values($transactions);
+        }
 
         // Hitung total debet dan kredit secara terpisah dari masing-masing sisi
         $totalDebit  = array_sum(array_column($transactions, 'debitAmount'));
         $totalCredit = array_sum(array_column($transactions, 'creditAmount'));
 
-        return view('akuntansi.jurnal', compact('transactions', 'accounts', 'totalDebit', 'totalCredit', 'akunsList'));
+        return view('akuntansi.jurnal', compact('transactions', 'accounts', 'totalDebit', 'totalCredit', 'akunsList', 'startDate', 'endDate'));
     }
 
     public function store(StoreJurnalRequest $request)
@@ -58,6 +89,17 @@ class JurnalController extends Controller
     public function destroy(Jurnal $jurnal)
     {
         abort_if($jurnal->is_static, 403, 'Transaksi studi kasus tidak dapat dihapus.');
+
+        $user = auth()->user();
+        if (!$user->role->is_full_access) {
+            foreach ($jurnal->details as $detail) {
+                if (!$user->canAccessAkun($detail->akun_kode)) {
+                    return redirect()->route('akuntansi.jurnal')
+                        ->withErrors('Anda tidak memiliki akses untuk menghapus transaksi yang melibatkan akun: ' . $detail->akun_kode);
+                }
+            }
+        }
+
         $jurnal->delete();
 
         return redirect()->route('akuntansi.jurnal')
@@ -67,6 +109,13 @@ class JurnalController extends Controller
     public function details(Jurnal $jurnal)
     {
         abort_if($jurnal->is_static, 403, 'Transaksi studi kasus tidak dapat diubah.');
+
+        $user = auth()->user();
+        if (!$user->role->is_full_access) {
+            foreach ($jurnal->details as $detail) {
+                abort_if(!$user->canAccessAkun($detail->akun_kode), 403, 'Anda tidak memiliki akses ke beberapa akun dalam transaksi ini.');
+            }
+        }
 
         return response()->json([
             'id'         => $jurnal->id,
