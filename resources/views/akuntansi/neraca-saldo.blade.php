@@ -50,7 +50,7 @@
             <div class="text-center space-y-1">
                 <h1 class="text-lg font-bold text-slate-600 uppercase tracking-wide">Perusahaan Jasa Cleaning Service</h1> 
                 <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Neraca Saldo</h2> 
-                <p class="text-sm font-semibold text-slate-500">Per: 30 April 2008</p> 
+                <p class="text-sm font-semibold text-slate-500"></p> 
             </div>
 
             <div class="absolute top-6 right-6 no-print">
