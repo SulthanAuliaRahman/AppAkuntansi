@@ -14,6 +14,7 @@ use App\Http\Controllers\SaldoAwalController;
 use App\Http\Controllers\admin\AdminUserController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\AksesAkunController;
+use App\Http\Controllers\KategoriAkunController;
 use Illuminate\Support\Facades\Route;
 
 // PUBLIC ROUTES
@@ -34,6 +35,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Klasifikasi
     Route::resource('klasifikasi', KlasifikasiController::class)->names('akuntansi.klasifikasi');
+
+    Route::get('/kategori',            [KategoriAkunController::class, 'index'])->name('akuntansi.kategori');
+    Route::post('/kategori',           [KategoriAkunController::class, 'store'])->name('akuntansi.kategori.store');
+    Route::put('/kategori/{id}',       [KategoriAkunController::class, 'update'])->name('akuntansi.kategori.update');
+    Route::delete('/kategori/{id}',    [KategoriAkunController::class, 'destroy'])->name('akuntansi.kategori.destroy');
 
     // Saldo Awal (Nama route dipertahankan)
     Route::get('/saldo-awal',          [SaldoAwalController::class, 'index'])->name('akuntansi.saldoawal');
