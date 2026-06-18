@@ -12,6 +12,6 @@ class JenisAkun extends Model
 
     public function akuns(): HasMany
     {
-        return $this->hasMany(Akun::class, 'jenis_akun_id');
+        return $this->hasMany(Akuns::class, 'jenis_akun_id');
     }
 }

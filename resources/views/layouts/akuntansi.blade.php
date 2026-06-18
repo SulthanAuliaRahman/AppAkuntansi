@@ -27,13 +27,11 @@
                 </div>
                 <div>
                     <span class="text-xs font-semibold tracking-wider text-indigo-200 uppercase">Aplikasi Akuntansi Interaktif</span>
-                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Perusahaan Jasa "Anugerah Sakti"</h1>
+                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Perusahaan Jasa</h1>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right hidden md:block">
-                    <p class="text-xs text-indigo-200">Kasus Kelompok 2</p>
-                    <p class="text-sm font-semibold">Periode April 2008</p>
                 </div>
                 <div class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2">
                     <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
