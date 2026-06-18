@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\AkuntansiService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 
 class BukuBesarController extends Controller
@@ -94,6 +96,70 @@ class BukuBesarController extends Controller
         return view('akuntansi.buku-besar', compact(
             'accounts', 'accountsWithData', 'pagedAccounts', 'page', 'totalPages', 'startDate', 'endDate', 'viewMode'
         ));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $html = view('akuntansi.exports.buku-besar', $this->getExportData($request))->render();
+
+        $options = new Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $options->set('isRemoteEnabled', false);
+
+        $pdf = new Dompdf($options);
+        $pdf->loadHtml($html);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->render();
+
+        return response($pdf->output(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="buku-besar.pdf"',
+        ]);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $html = view('akuntansi.exports.buku-besar', $this->getExportData($request))->render();
+
+        return response($html, 200, [
+            'Content-Type'        => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="buku-besar.xls"',
+            'Cache-Control'       => 'max-age=0',
+        ]);
+    }
+
+    private function getExportData(Request $request): array
+    {
+        $accounts     = $this->service->getAccountsConfig();
+        $transactions = $this->service->getTransactions();
+        $ledgers      = $this->service->calculateLedgers($transactions);
+        $startDate    = $request->input('start_date');
+        $endDate      = $request->input('end_date');
+
+        $codes = array_filter(array_keys($ledgers), function ($code) use ($ledgers) {
+            $entries = $ledgers[$code];
+            if (empty($entries)) return false;
+            $first = $entries[0];
+            return ($first['debit'] > 0 || $first['credit'] > 0) || count($entries) > 1;
+        });
+
+        $codes = array_values($codes);
+        usort($codes, fn($a, $b) => strcmp($a, $b));
+
+        $allAccounts = [];
+        foreach ($codes as $code) {
+            $entries = $ledgers[$code] ?? [];
+            if ($startDate || $endDate) {
+                $entries = $this->filterEntriesByDateRange($entries, $startDate, $endDate);
+            }
+            $allAccounts[$code] = [
+                'config'  => $accounts[$code],
+                'entries' => $entries,
+                'summary' => $this->calculateSummary($entries),
+            ];
+        }
+
+        return compact('allAccounts', 'startDate', 'endDate');
     }
 
     private function filterEntriesByDateRange(array $entries, ?string $startDate, ?string $endDate): array

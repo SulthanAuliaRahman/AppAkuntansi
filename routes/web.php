@@ -97,7 +97,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reset',              [JurnalController::class, 'reset'])->name('akuntansi.reset');
 
     // Buku Besar & Neraca Saldo
+    Route::get('/buku-besar/export-pdf',   [BukuBesarController::class, 'exportPdf'])->name('akuntansi.bukubesar.pdf');
+    Route::get('/buku-besar/export-excel', [BukuBesarController::class, 'exportExcel'])->name('akuntansi.bukubesar.excel');
     Route::get('/buku-besar',          [BukuBesarController::class, 'index'])->name('akuntansi.bukubesar');
+    Route::get('/neraca-saldo/export-pdf',   [NeracaSaldoController::class, 'exportPdf'])->name('akuntansi.neracasaldo.pdf');
+    Route::get('/neraca-saldo/export-excel', [NeracaSaldoController::class, 'exportExcel'])->name('akuntansi.neracasaldo.excel');
     Route::get('/neraca-saldo',        [NeracaSaldoController::class, 'index'])->name('akuntansi.neracasaldo');
 
     // Jurnal Penyesuaian (Nama route dipertahankan)
