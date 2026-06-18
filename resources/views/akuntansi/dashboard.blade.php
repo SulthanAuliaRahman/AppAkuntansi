@@ -67,33 +67,7 @@
         </div>
 
         <!-- Sandbox Banner -->
-        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden">
-            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-amber-400 text-slate-950 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Sandbox Mode</span>
-                        <h4 class="text-lg font-bold">Simulator Interaktif Akuntansi</h4>
-                    </div>
-                    <p class="text-sm text-indigo-200 max-w-2xl">
-                        Bereksperimen mengubah transaksi di menu Jurnal Umum. Semua siklus akuntansi dihitung otomatis oleh server dari Jurnal hingga Laporan Keuangan!
-                    </p>
-                </div>
-                <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('akuntansi.jurnal') }}" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Kelola Transaksi
-                    </a>
-                    <form method="POST" action="{{ route('akuntansi.reset') }}">
-                        @csrf
-                        <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-rotate-left"></i> Reset Data Kasus
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="absolute -right-10 -bottom-10 text-white/5 text-9xl font-bold select-none pointer-events-none">
-                <i class="fa-solid fa-sliders"></i>
-            </div>
-        </div>
+        
     </div>
 </main>
 
