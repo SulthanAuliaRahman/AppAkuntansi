@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Akuns;
 use App\Services\AkuntansiService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Support\Facades\DB;
 
 class LaporanKeuanganController extends Controller
@@ -11,6 +13,41 @@ class LaporanKeuanganController extends Controller
     public function __construct(private AkuntansiService $service) {}
 
     public function index()
+    {
+        return view('akuntansi.laporan-keuangan', $this->getReportData());
+    }
+
+    public function exportPdf()
+    {
+        $html = view('akuntansi.exports.laporan-keuangan', $this->getReportData())->render();
+
+        $options = new Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $options->set('isRemoteEnabled', false);
+
+        $pdf = new Dompdf($options);
+        $pdf->loadHtml($html);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->render();
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="laporan-keuangan.pdf"',
+        ]);
+    }
+
+    public function exportExcel()
+    {
+        $html = view('akuntansi.exports.laporan-keuangan', $this->getReportData())->render();
+
+        return response($html, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="laporan-keuangan.xls"',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
+    private function getReportData(): array
     {
         $rows = $this->buildWorksheetRows();
 
@@ -43,7 +80,7 @@ class LaporanKeuanganController extends Controller
         $totalLiabilities = array_sum(array_column($liabilities, 'amount'));
         $totalPassives = $totalLiabilities + $finalCap;
 
-        return view('akuntansi.laporan-keuangan', compact(
+        return compact(
             'revenues',
             'expenses',
             'totalRev',
@@ -58,7 +95,7 @@ class LaporanKeuanganController extends Controller
             'liabilities',
             'totalLiabilities',
             'totalPassives'
-        ));
+        );
     }
 
     private function buildWorksheetRows(): array

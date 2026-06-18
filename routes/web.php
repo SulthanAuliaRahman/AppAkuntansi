@@ -71,6 +71,8 @@ Route::middleware(['auth'])->group(function () {
     // Kertas Kerja & Laporan
     Route::get('/kertas-kerja',        [KertasKerjaController::class, 'index'])->name('akuntansi.kertaskerja');
     Route::get('/laporan-keuangan',    [LaporanKeuanganController::class, 'index'])->name('akuntansi.laporan.keuangan');
+    Route::get('/laporan-keuangan/export/pdf', [LaporanKeuanganController::class, 'exportPdf'])->name('akuntansi.laporan.keuangan.pdf');
+    Route::get('/laporan-keuangan/export/excel', [LaporanKeuanganController::class, 'exportExcel'])->name('akuntansi.laporan.keuangan.excel');
 
     // Jurnal Penutup (Nama route dipertahankan)
     Route::get('/jurnal-penutup',       [JurnalPenutupController::class, 'index'])->name('akuntansi.penutup');
