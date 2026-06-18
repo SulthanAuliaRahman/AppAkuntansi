@@ -73,6 +73,7 @@ class AkuntansiService
 
             return [
                 'id'           => $jurnal->id,
+                'rawDate'      => $jurnal->tanggal,
                 'date'         => $this->formatTanggal($jurnal->tanggal),
                 'desc'         => $jurnal->keterangan,
                 'is_static'    => $jurnal->is_static,
