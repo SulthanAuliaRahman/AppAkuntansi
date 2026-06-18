@@ -8,7 +8,6 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h2 class="text-xl font-bold text-slate-800">1. Jurnal Umum (General Journal)</h2>
-                <p class="text-sm text-slate-500">Pencatatan seluruh transaksi kronologis selama periode April 2008</p>
             </div>
             <button onclick="openAddModal()"
                 class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md flex items-center gap-2">
@@ -49,8 +48,6 @@
                     </thead>
                     <tbody class="text-sm divide-y divide-slate-100">
                         <tr class="bg-indigo-50/40 font-medium text-slate-400 text-xs">
-                            <td class="py-2.5 px-5">31 Mar</td>
-                            <td class="py-2.5 px-5" colspan="4">Kombinasi saldo awal neraca periode sebelumnya (Perpindahan Buku)</td>
                             <td class="py-2.5 px-5 text-center">
                                 <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Sistem</span>
                             </td>
