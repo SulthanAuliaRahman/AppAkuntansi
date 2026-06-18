@@ -16,12 +16,21 @@ class NeracaSaldoController extends Controller
         $transactions = $this->service->getTransactions();
         $ledgers      = $this->service->calculateLedgers($transactions);
 
+        // Filter akun berdasarkan akses user
+        $user = auth()->user();
+        $accessibleAkunCodes = $user->getAccessibleAkuns()->pluck('kode_akun')->toArray();
+
         $rows        = [];
         $totalDebit  = 0;
         $totalCredit = 0;
 
         // 2. Looping setiap akun untuk diambil "Final Balance" atau Saldo Akhirnya
         foreach ($accounts as $code => $config) {
+            // Cek akses akun
+            if (!$user->role->is_full_access && !in_array($code, $accessibleAkunCodes)) {
+                continue;
+            }
+
             $entries = $ledgers[$code] ?? [];
 
             // Ambil saldo akhir persis seperti cara Buku Besar mengambilnya

@@ -15,8 +15,8 @@ class JurnalSeeder extends Seeder
                 'tanggal' => '2008-04-01',
                 'keterangan' => 'Dibayar sewa 1 tahun di depan',
                 'details' => [
-                    ['akun_kode' => '114', 'type' => 'debet', 'jumlah' => 1500000],
-                    ['akun_kode' => '111', 'type' => 'kredit', 'jumlah' => 1500000],
+                    ['akun_kode' => '1.1.4', 'type' => 'debet', 'jumlah' => 1500000],
+                    ['akun_kode' => '1.1.1', 'type' => 'kredit', 'jumlah' => 1500000],
                 ]
             ],
             [

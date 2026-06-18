@@ -5,9 +5,23 @@
     @include('akuntansi.partials.navigation')
 
     <div class="space-y-6">
-        <div>
-            <h2 class="text-xl font-bold text-slate-800">6B. Laporan Keuangan Setelah Penyesuaian</h2>
-            <p class="text-sm text-slate-500">Disusun dari kolom Laba Rugi dan Neraca pada Kertas Kerja</p>
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">Laporan Keuangan</h2>
+                <p class="text-sm text-slate-500">Disusun dari kolom Laba Rugi dan Neraca pada Kertas Kerja</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('akuntansi.laporan.keuangan.pdf') }}"
+                   class="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Export PDF</span>
+                </a>
+                <a href="{{ route('akuntansi.laporan.keuangan.excel') }}"
+                   class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Export Excel</span>
+                </a>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
