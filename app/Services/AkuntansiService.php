@@ -44,6 +44,13 @@ class AkuntansiService
         // 2. Siapkan query dasar pengambilan data Jurnal Umum beserta detailnya
         $query = Jurnal::with('details');
 
+        if (session()->has('global_start_date')) {
+            $query->whereDate('tanggal', '>=', session('global_start_date'));
+        }
+        if (session()->has('global_end_date')) {
+            $query->whereDate('tanggal', '<=', session('global_end_date'));
+        }
+
         // 3. LOGIKA SMART OVEN: Sesuaikan cara urut tanggal berdasarkan merk database
         if ($driver === 'pgsql') {
             // Jalur aman tanpa crash untuk PostgreSQL ketat di laptop yanto
