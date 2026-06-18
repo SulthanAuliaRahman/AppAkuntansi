@@ -71,13 +71,15 @@
                     <label class="text-sm font-semibold text-slate-700 block mb-2">
                         Nominal (Rp)
                     </label>
-                    <input type="number"
-                        name="nominal"
-                        value="{{ old('nominal', $nominalSekarang) }}"
-                        min="1"
-                        required
+                    <input type="text"
+                        id="nominal-display"
+                        inputmode="numeric"
+                        oninput="formatNominalInput(this)"
+                        value="{{ number_format((int) old('nominal', $nominalSekarang), 0, ',', '.') }}"
                         class="w-full bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('nominal') border-red-500 @enderror"
-                        placeholder="Masukkan nominal">
+                        placeholder="Contoh: 120.000.000">
+                    <input type="hidden" name="nominal" id="nominal-hidden"
+                        value="{{ old('nominal', $nominalSekarang) }}">
                     @error('nominal')
                         <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -134,4 +136,12 @@
         </div>
     </div>
 </main>
+<script>
+function formatNominalInput(el) {
+    const raw = el.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+    document.getElementById('nominal-hidden').value = raw || '0';
+    el.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
+}
+</script>
+
 @endsection

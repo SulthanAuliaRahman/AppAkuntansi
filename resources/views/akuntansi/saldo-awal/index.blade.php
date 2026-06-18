@@ -166,9 +166,13 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Nominal (Rp)</label>
-                    <input type="number" name="nominal" id="add-nominal" value="{{ old('nominal', 0) }}" min="0" required
+                    <input type="text" id="add-nominal-display"
+                        value="{{ old('nominal') ? number_format((int) old('nominal'), 0, ',', '.') : '' }}"
+                        inputmode="numeric"
+                        oninput="formatNominalInput(this, 'add-nominal')"
                         class="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Masukkan nominal">
+                        placeholder="Contoh: 120.000.000">
+                    <input type="hidden" name="nominal" id="add-nominal" value="{{ old('nominal', 0) }}">
                     @error('nominal')
                         <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -219,9 +223,17 @@
 </div>
 
 <script>
+function formatNominalInput(el, hiddenId) {
+    const raw = el.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+    document.getElementById(hiddenId).value = raw || '0';
+    el.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
+}
+
 function openAddModal() {
     document.getElementById('add-modal').style.display = 'flex';
     document.getElementById('add-form').reset();
+    document.getElementById('add-nominal-display').value = '';
+    document.getElementById('add-nominal').value = '0';
 }
 
 function closeModal() {
