@@ -1,44 +1,6 @@
 @extends('layouts.akuntansi')
 
 @section('content')
-<style media="print">
-    @page {
-        size: A4;
-        margin: 10mm;
-    }
-    body {
-        margin: 0;
-        padding: 0;
-    }
-    main {
-        max-width: 100% !important;
-        padding: 0 !important;
-    }
-    .no-print {
-        display: none !important;
-    }
-    button {
-        display: none !important;
-    }
-    form {
-        margin-bottom: 0 !important;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 6px 4px !important;
-        font-size: 11px !important;
-    }
-    .shadow-sm, .border {
-        border: 1px solid #000 !important;
-        box-shadow: none !important;
-    }
-    .bg-amber-50, .bg-slate-50, .bg-slate-100 {
-        background: #f9fafb !important;
-    }
-</style>
 <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
     @include('akuntansi.partials.navigation')
 
@@ -50,12 +12,13 @@
                     <h2 class="text-xl font-bold text-slate-800">2. Buku Besar (Ledger - Single Balance Format)</h2>
                     <p class="text-sm text-slate-500">Mutasi saldo masing-masing akun perkiraan secara kronologis</p>
                 </div>
-                <button onclick="window.print()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path>
-                    </svg>
-                    Print
-                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ route('akuntansi.bukubesar.excel', request()->only('start_date','end_date')) }}"
+                       class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Export Excel</span>
+                    </a>
+                </div>
             </div>
 
             <!-- View Mode Tabs -->

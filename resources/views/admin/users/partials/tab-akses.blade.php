@@ -37,7 +37,7 @@
                                     <i class="fa-solid fa-asterisk text-[9px]"></i> Semua Akun (Bypass)
                                 </span>
                             @else
-                                @php $akunList = $user->role?->aksesAkun ?? collect(); @endphp
+                                @php $akunList = $user->role?->akunAkses ?? collect(); @endphp
                                 <div class="flex flex-wrap gap-2">
                                     @forelse($akunList as $akun)
                                         <span class="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">

@@ -17,13 +17,13 @@ class JurnalController extends Controller
 
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate   = $request->input('end_date');
+        $startDate = $request->input('start_date', session('global_start_date'));
+        $endDate   = $request->input('end_date', session('global_end_date'));
 
         $transactions = $this->service->getTransactions();
         $accounts     = $this->service->getAccountsConfig();
 
-        // Filter berdasarkan tanggal
+        // Filter berdasarkan tanggal (local filter dari request atau session)
         if ($startDate || $endDate) {
             $transactions = array_filter($transactions, function ($t) use ($startDate, $endDate) {
                 if (!isset($t['rawDate'])) return true;
