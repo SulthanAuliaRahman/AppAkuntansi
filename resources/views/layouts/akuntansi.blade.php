@@ -26,7 +26,7 @@
                     <i class="fa-solid fa-chart-pie text-2xl text-amber-300"></i>
                 </div>
                 <div>
-                    <span class="text-xs font-semibold tracking-wider text-indigo-200 uppercase">Aplikasi Akuntansi Interaktif</span>
+                    <span class="text-xs font-semibold tracking-wider text-indigo-200 uppercase">FinansialApps</span>
                     <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Perusahaan Jasa</h1>
                 </div>
             </div>
