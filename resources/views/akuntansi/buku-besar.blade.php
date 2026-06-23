@@ -95,7 +95,7 @@
                 </div>
 
                 @foreach ($pagedAccounts as $code => $account)
-                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="bg-white rounded-2xl border border-slate-500 shadow-sm overflow-hidden">
                     <!-- Account Header -->
                     <div class="p-5 border-b border-slate-100 bg-slate-50">
                         <div class="flex justify-between items-start flex-wrap gap-4 mb-3">
@@ -146,25 +146,25 @@
                                 </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot class="bg-slate-50 border-t-2 border-slate-300">
+                                <tr class="text-sm">
+                                    <td class="py-4 px-5"></td>
+                                    <td class="py-4 px-5"></td>
+                                    <td class="py-4 px-5 text-right border-l border-slate-200">
+                                        <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Total Debet</div>
+                                        <div class="text-sm font-bold text-slate-800">Rp {{ number_format($account['summary']['totalDebit'],0,',','.') }}</div>
+                                    </td>
+                                    <td class="py-4 px-5 text-right border-l border-slate-200">
+                                        <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Total Kredit</div>
+                                        <div class="text-sm font-bold text-slate-800">Rp {{ number_format($account['summary']['totalCredit'],0,',','.') }}</div>
+                                    </td>
+                                    <td colspan="2" class="py-4 px-5 text-center border-l border-slate-200">
+                                        <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Saldo Akhir</div>
+                                        <div class="text-sm font-bold text-indigo-700">@rupiah($account['summary']['finalBalance'])</div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
-                    </div>
-
-                    <!-- Summary -->
-                    <div class="p-5 border-t border-slate-100 bg-slate-50">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="text-center">
-                                <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Total Debet</span>
-                                <p class="text-lg font-bold text-slate-800">@rupiah($account['summary']['totalDebit'])</p>
-                            </div>
-                            <div class="text-center border-l border-r border-slate-200">
-                                <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Total Kredit</span>
-                                <p class="text-lg font-bold text-slate-800">@rupiah($account['summary']['totalCredit'])</p>
-                            </div>
-                            <div class="text-center">
-                                <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Saldo Akhir</span>
-                                <p class="text-lg font-bold text-indigo-700">@rupiah($account['summary']['finalBalance'])</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 @endforeach
