@@ -18,8 +18,8 @@ class BukuBesarController extends Controller
         $viewMode     = $request->input('view', 'all'); // 'all' atau 'single'
         $page         = max(1, (int) $request->input('page', 1));
         $selectedCode = $request->input('akun');
-        $startDate    = $request->input('start_date');
-        $endDate      = $request->input('end_date');
+        $startDate    = $request->input('start_date', session('global_start_date'));
+        $endDate      = $request->input('end_date', session('global_end_date'));
 
         $accounts     = $this->service->getAccountsConfig();
         $transactions = $this->service->getTransactions();

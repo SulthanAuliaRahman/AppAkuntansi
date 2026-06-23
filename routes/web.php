@@ -25,6 +25,45 @@ Route::get('/', function () {
 // AUTHENTICATED ROUTES (ALL USERS)
 Route::middleware(['auth'])->group(function () {
 
+    Route::post('/set-period', function (Illuminate\Http\Request $request) {
+        $period = $request->input('period');
+        $startDate = null;
+        $endDate = now()->format('Y-m-d'); // Default end date is today
+        $customMonth = null;
+        $customYear = null;
+
+        if ($period === '1_month') {
+            $startDate = now()->startOfMonth()->format('Y-m-d');
+            $endDate = now()->endOfMonth()->format('Y-m-d');
+        } elseif ($period === '3_months') {
+            $startDate = now()->subMonths(2)->startOfMonth()->format('Y-m-d');
+            $endDate = now()->endOfMonth()->format('Y-m-d');
+        } elseif ($period === '1_year') {
+            $startDate = now()->startOfYear()->format('Y-m-d');
+            $endDate = now()->endOfYear()->format('Y-m-d');
+        } elseif ($period === 'custom_month') {
+            $customMonth = $request->input('custom_month', now()->month);
+            $customYear = $request->input('custom_year', now()->year);
+            $date = \Carbon\Carbon::createFromDate($customYear, $customMonth, 1);
+            $startDate = $date->startOfMonth()->format('Y-m-d');
+            $endDate = $date->endOfMonth()->format('Y-m-d');
+        }
+
+        if (in_array($period, ['1_month', '3_months', '1_year', 'custom_month'])) {
+            session([
+                'global_start_date' => $startDate,
+                'global_end_date' => $endDate,
+                'global_period' => $period,
+                'global_custom_month' => $customMonth,
+                'global_custom_year' => $customYear
+            ]);
+        } else {
+            session()->forget(['global_start_date', 'global_end_date', 'global_period', 'global_custom_month', 'global_custom_year']);
+        }
+
+        return back();
+    })->name('set-period');
+
     // Dashboard (Breeze default disatukan dengan akuntansi.dashboard)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

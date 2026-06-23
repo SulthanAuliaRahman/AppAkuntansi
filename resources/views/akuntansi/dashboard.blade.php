@@ -5,6 +5,46 @@
     @include('akuntansi.partials.navigation')
 
     <div class="space-y-6">
+        <!-- Header & Filter -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">Dashboard Keuangan</h2>
+                <p class="text-sm text-slate-500">Ringkasan aktivitas dan posisi keuangan</p>
+            </div>
+            
+            <form action="{{ route('set-period') }}" method="POST" class="flex flex-wrap gap-2 items-center bg-white p-2 rounded-xl border border-slate-200 shadow-sm" id="period-form">
+                @csrf
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Periode:</label>
+                <select name="period" id="period-select" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer" onchange="toggleCustomMonth(); if(this.value !== 'custom_month') this.form.submit()">
+                    <option value="all" {{ session('global_period') == 'all' || !session('global_period') ? 'selected' : '' }}>Semua Waktu</option>
+                    <option value="1_month" {{ session('global_period') == '1_month' ? 'selected' : '' }}>Bulan Ini</option>
+                    <option value="3_months" {{ session('global_period') == '3_months' ? 'selected' : '' }}>3 Bulan Terakhir</option>
+                    <option value="1_year" {{ session('global_period') == '1_year' ? 'selected' : '' }}>Tahun Ini</option>
+                    <option value="custom_month" {{ session('global_period') == 'custom_month' ? 'selected' : '' }}>Pilih Bulan & Tahun</option>
+                </select>
+
+                <div id="custom-month-container" class="flex items-center gap-2 {{ session('global_period') == 'custom_month' ? '' : 'hidden' }}">
+                    <select name="custom_month" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ $m }}" {{ (session('global_custom_month') ?? now()->month) == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <select name="custom_year" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        @foreach($availableYears as $y)
+                            <option value="{{ $y }}" {{ (session('global_custom_year') ?? now()->year) == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white p-1.5 rounded-lg text-sm transition-all" title="Terapkan Filter">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <!-- KPI Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all duration-200">
@@ -72,6 +112,16 @@
 </main>
 
 <script>
+function toggleCustomMonth() {
+    const select = document.getElementById('period-select');
+    const container = document.getElementById('custom-month-container');
+    if (select.value === 'custom_month') {
+        container.classList.remove('hidden');
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
 const chartData = @json($chartData);
 
 document.addEventListener('DOMContentLoaded', function () {
