@@ -129,6 +129,7 @@ class AkuntansiService
 
             $ledgers[$code] = [[
                 'date'    => '31 Mar',
+                'rawDate' => '2008-03-31',
                 'desc'    => 'Saldo Awal (Neraca Saldo Maret)',
                 'debit'   => $init['debit'],
                 'credit'  => $init['credit'],
@@ -150,6 +151,7 @@ class AkuntansiService
                     if ($entry['type'] === 'debet') {
                         $ledgers[$acc][] = [
                             'date'    => $t['date'],
+                            'rawDate' => $t['rawDate'] ?? null,
                             'desc'    => $t['desc'],
                             'debit'   => $amount,
                             'credit'  => 0,
@@ -158,6 +160,7 @@ class AkuntansiService
                     } else {
                         $ledgers[$acc][] = [
                             'date'    => $t['date'],
+                            'rawDate' => $t['rawDate'] ?? null,
                             'desc'    => $t['desc'],
                             'debit'   => 0,
                             'credit'  => $amount,
@@ -180,6 +183,7 @@ class AkuntansiService
                 $isDebit = ($accounts[$dAcc]['normal'] ?? 'debit') === 'debit';
                 $ledgers[$dAcc][] = [
                     'date'    => $t['date'],
+                    'rawDate' => $t['rawDate'] ?? null,
                     'desc'    => $t['desc'],
                     'debit'   => $debitAmount,
                     'credit'  => 0,
@@ -193,6 +197,7 @@ class AkuntansiService
                 $isDebit = ($accounts[$cAcc]['normal'] ?? 'debit') === 'debit';
                 $ledgers[$cAcc][] = [
                     'date'    => $t['date'],
+                    'rawDate' => $t['rawDate'] ?? null,
                     'desc'    => $t['desc'],
                     'debit'   => 0,
                     'credit'  => $creditAmount,

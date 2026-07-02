@@ -165,23 +165,13 @@ class BukuBesarController extends Controller
     private function filterEntriesByDateRange(array $entries, ?string $startDate, ?string $endDate): array
     {
         return array_filter($entries, function ($entry) use ($startDate, $endDate) {
-            if (empty($entry['date'])) return true;
+            $rawDate = $entry['rawDate'] ?? null;
+            if (!$rawDate) return true;
 
-            try {
-                $entryDate = \Carbon\Carbon::createFromFormat('d M', $entry['date'])->format('m-d');
-            } catch (\Exception) {
-                return true;
-            }
+            $entryDate = \Carbon\Carbon::parse($rawDate)->format('Y-m-d');
 
-            if ($startDate) {
-                $start = \Carbon\Carbon::parse($startDate)->format('m-d');
-                if ($entryDate < $start) return false;
-            }
-
-            if ($endDate) {
-                $end = \Carbon\Carbon::parse($endDate)->format('m-d');
-                if ($entryDate > $end) return false;
-            }
+            if ($startDate && $entryDate < $startDate) return false;
+            if ($endDate   && $entryDate > $endDate)   return false;
 
             return true;
         });
