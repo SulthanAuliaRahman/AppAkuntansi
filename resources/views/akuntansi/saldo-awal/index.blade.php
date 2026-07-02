@@ -120,11 +120,21 @@
                         </tr>
                         @endforelse
                     </tbody>
+                    <tfoot class="bg-slate-50 border-t-2 border-slate-300 text-sm">
+                        <tr class="font-bold">
+                            <td class="py-3 px-5" colspan="4">
+                                <span class="text-slate-500 font-semibold">Total ({{ $saldoAwals->count() }} akun)</span>
+                            </td>
+                            <td class="py-3 px-5 text-right text-green-700">
+                                Rp {{ number_format($saldoAwals->sum('debet'), 0, ',', '.') }}
+                            </td>
+                            <td class="py-3 px-5 text-right text-blue-700">
+                                Rp {{ number_format($saldoAwals->sum('kredit'), 0, ',', '.') }}
+                            </td>
+                            <td class="py-3 px-5"></td>
+                        </tr>
+                    </tfoot>
                 </table>
-            </div>
-
-            <div class="p-5 border-t border-slate-100 bg-slate-50 text-xs text-slate-600">
-                📌 Total akun: <span class="font-bold">{{ $saldoAwals->count() }}</span>
             </div>
         </div>
     </div>
