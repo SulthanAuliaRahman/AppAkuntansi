@@ -120,16 +120,29 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot class="bg-slate-50 border-t-2 border-slate-300 text-sm">
+                    @php
+                        $totalDebet = $saldoAwals->sum('debet');
+                        $totalKredit = $saldoAwals->sum('kredit');
+                        $isBalance = $totalDebet === $totalKredit;
+                    @endphp
+                    <tfoot class="border-t-2 {{ $isBalance ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-400' }} text-sm">
                         <tr class="font-bold">
                             <td class="py-3 px-5" colspan="4">
-                                <span class="text-slate-500 font-semibold">Total ({{ $saldoAwals->count() }} akun)</span>
+                                @if ($isBalance)
+                                    <span class="inline-flex items-center gap-1.5 text-green-700 font-semibold">
+                                        <i class="fa-solid fa-circle-check"></i> Balance ({{ $saldoAwals->count() }} akun)
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 text-red-700 font-semibold">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Tidak Balance! Selisih: Rp {{ number_format(abs($totalDebet - $totalKredit), 0, ',', '.') }}
+                                    </span>
+                                @endif
                             </td>
-                            <td class="py-3 px-5 text-right text-green-700">
-                                Rp {{ number_format($saldoAwals->sum('debet'), 0, ',', '.') }}
+                            <td class="py-3 px-5 text-right {{ $isBalance ? 'text-green-700' : 'text-red-700' }}">
+                                Rp {{ number_format($totalDebet, 0, ',', '.') }}
                             </td>
-                            <td class="py-3 px-5 text-right text-blue-700">
-                                Rp {{ number_format($saldoAwals->sum('kredit'), 0, ',', '.') }}
+                            <td class="py-3 px-5 text-right {{ $isBalance ? 'text-green-700' : 'text-red-700' }}">
+                                Rp {{ number_format($totalKredit, 0, ',', '.') }}
                             </td>
                             <td class="py-3 px-5"></td>
                         </tr>
